@@ -6,8 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
-(setq user-full-name "John Doe"
-      user-mail-address "john@doe.com")
+(setq user-full-name "Ritesh Kumar"
+      user-mail-address "ritesh@emerald.pink")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -25,7 +25,10 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-vibrant)
+;; (setq doom-theme 'doom-outrun-electric) ;; night timee!!!
+;; (setq doom-theme 'doom-one-light) ;; // day timeeeee!
+;; (setq doom-theme 'doom-acario-light)
+;; (setq doom-theme 'doom-acario-light)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -52,3 +55,50 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+
+
+;; Ritesh's custom configs:
+
+;;>> circadian for automatic theme changes
+(use-package circadian
+  :config
+  (setq calendar-latitude 43.653225)
+  (setq calendar-longitude -79.383186)
+  (setq circadian-themes '((:sunrise . doom-acario-dark)
+                           (:sunset  . doom-moonlight)))
+  (circadian-setup))
+
+;; >>> hl-todo custom keywords:
+;; (after! hl-todo
+;;   (setq hl-todo-keyword-faces
+;;         `(
+;;           ("QQ"  . (face-foreground "FF69B4"))
+;;           )))
+
+
+;;>> transparency things:
+ ;;(set-frame-parameter (selected-frame) 'alpha '(<active> . <inactive>))
+ ;;(set-frame-parameter (selected-frame) 'alpha <both>)
+ (set-frame-parameter (selected-frame) 'alpha '(85 . 50))
+ (add-to-list 'default-frame-alist '(alpha . (85 . 50)))
+
+
+(defun toggle-transparency ()
+   (interactive)
+   (let ((alpha (frame-parameter nil 'alpha)))
+     (set-frame-parameter
+      nil 'alpha
+      (if (eql (cond ((numberp alpha) alpha)
+                     ((numberp (cdr alpha)) (cdr alpha))
+                     ;; Also handle undocumented (<active> <inactive>) form.
+                     ((numberp (cadr alpha)) (cadr alpha)))
+               100)
+          '(85 . 50) '(100 . 100)))))
+ (global-set-key (kbd "C-c t") 'toggle-transparency)
+
+;; Set transparency of emacs
+ (defun transparency (value)
+   "Sets the transparency of the frame window. 0=transparent/100=opaque"
+   (interactive "nTransparency Value 0 - 100 opaque:")
+   (set-frame-parameter (selected-frame) 'alpha value))
