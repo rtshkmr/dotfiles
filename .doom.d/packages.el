@@ -52,3 +52,6 @@
 ;; =========== personal packages ================
 (package! circadian)
 (package! magit-todos)
+(package! py-autopep8)
+(package! calibredb)
+(package! nov)

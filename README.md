@@ -1,2 +1,7 @@
 # dotfiles
-Here's a bunch of dotfiles, it's always going ot be a work in progress
+
+
+This is a slipshod attempt at syncing my dotfiles. 
+
+
+
