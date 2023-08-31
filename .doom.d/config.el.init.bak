@@ -12,10 +12,6 @@
 ;; auth sources used by bots, outlined in documentation: https://magit.vc/manual/ghub.html#Storing-a-Token
 (setq auth-sources '("~/.authinfo"))
 
-                ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                ;; IDE CONFIGS -- improve the developer experience! ;;
-                ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
 ;; - `doom-font' -- the primary font to use
@@ -30,12 +26,12 @@
 ;;
 ;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
+
 (setq
    doom-font (font-spec :family "Fira Code" :size 14 :weight 'regular)
    doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14 :weight 'regular)
 )
 
-;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
 ;; refresh your font settings. If Emacs still can't find your font, it likely
@@ -44,54 +40,15 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-ir-black)
+(setq doom-theme 'doom-one)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type 'relative)
 
-
-;; >> only suggest when you ask manuall:
-;; (setq company-idle-delay nil)
-;; So that flycheck doesn't automaticaly run all the checks everytime you write a new line.
-;; (setq flycheck-check-syntax-automatically '(save mode-enable))
- '(flycheck-check-syntax-automatically (quote (save idle-change mode-
-enabled)))
- '(flycheck-idle-change-delay 4) ;; Set delay based on what suits you the best
-
-(after! lsp
-  (setq lsp-auto-configure t)
-  )
-
-                        ;;;;;;;;;;;;;;;;;;;;;;;
-                        ;; ORG MODE CONFIGS! ;;
-                        ;;;;;;;;;;;;;;;;;;;;;;;
-
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
-(global-set-key (kbd "C-c l") #'org-store-link)
-(global-set-key (kbd "C-c a") #'org-agenda)
-(global-set-key (kbd "C-c c") #'org-capture)
-
-
-;; Each sequence of keywords defines its own todo states, this is how we can set custom workflows
-;; NOTE: it's good if the keywords are all unique!!
-;; this defines a custom workflow of todo states and done states, delimited by |
-;;
-;; configuration on a per-keyword basis for this.  This is
-;; achieved by adding special markers ‘!’ (for a timestamp) or ‘@’ (for a
-;; note with timestamp) in parentheses after each keyword
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "|" "DONE(d)")
-        (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
-        (sequence "|" "CANCELED(c)")))
-
-(setq org-log-done 'note) ;; when a todo is done, records a note along w a timestamp
-(setq org-log-redeadline 'note) ;; when a todo is done, records a note along w a timestamp
-
-
-  ;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;    ;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
@@ -126,12 +83,6 @@ enabled)))
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-;; =============== Custom Variables ============================
-(setq fancy-splash-image (concat doom-user-dir "images/fam_splash_v0 3.jpg"))
-
-
-
-
 ;; ======================= Ritesh's Custom Functions ===========================
 
 ;;>> transparency things:
@@ -160,19 +111,32 @@ enabled)))
   (interactive "nTransparency Value 0 - 100 opaque:")
   (set-frame-parameter (selected-frame) 'alpha value))
 
+;; (setq fancy-splash-image (concat doom-user-dir "images/fam_banner.jpg"))
+
 
 ;; ======================= Ritesh's preferred packages ==========================
+
+(use-package! exec-path-from-shell
+  :config (exec-path-from-shell-initialize))
 
 (use-package! latex-preview-pane)
 (latex-preview-pane-enable)
 
-;;(use-package! circadian
-;;  :config
-;;  (setq calendar-latitude 42.653225)
-;;  (setq calendar-longitude -80.383186)
-;;  (setq circadian-themes '((:sunrise . doom-acario-light)
-;;                           (:sunset  . doom-outrun-electric)))
-;;  (circadian-setup))
+(use-package! circadian
+  :config
+
+  ;; ========= TORONTO =============
+  ;; (setq calendar-latitude 43.653225)
+  ;; (setq calendar-longitude -79.383186)
+  ;; ========= SINGAPORE =============
+  (setq calendar-latitude 1.3391155685846359)
+  (setq calendar-longitude 103.72119506947016)
+
+
+
+  (setq circadian-themes '(("8:00" . doom-acario-light)
+                           ("19:30"  . doom-outrun-electric)))
+  (circadian-setup))
 
 (use-package! py-autopep8
   :demand t
