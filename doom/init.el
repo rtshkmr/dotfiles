@@ -23,15 +23,15 @@
        :completion
        (company           ; the ultimate code completion backend
         +tng
-       )
+        )
        ;;helm              ; the *other* search engine for love and life
        ido               ; the other *other* search engine...
        (ivy               ; a search engine for love and life
         +fuzzy
-       )
+        )
        (vertico           ; the search engine of the future
         +icons
-       )
+        )
 
        :ui
        deft              ; notational velocity for Emacs
@@ -45,7 +45,7 @@
        (ligatures         ; ligatures and symbols to make your code pretty again
         +extra
         +fira
-       )
+        )
        minimap           ; show a map of the code on the side
        modeline          ; snazzy, Atom-inspired modeline, plus API
        nav-flash         ; blink cursor line after big motions
@@ -56,7 +56,7 @@
        (treemacs          ; a project drawer, like neotree but cooler
         +icons
         +lsp
-       )
+        )
        unicode           ; extended unicode support for various languages
        (vc-gutter
         +diff-hl
@@ -71,8 +71,8 @@
        file-templates    ; auto-snippets for empty files
        fold              ; (nigh) universal code folding
        (format           ; automated prettiness
-        ;; +onsave
-       )
+        +onsave
+        )
        ;;god               ; run Emacs commands without modifier keys
        ;;lispy             ; vim for lisp, for people who don't like vim
        ;;multiple-cursors  ; editing in many places at once
@@ -86,14 +86,14 @@
        (dired             ; making dired pretty [functional]
         +icons
         +ranger
-       )
+        )
        electric          ; smarter, keyword-based electric-indent
        (ibuffer         ; interactive buffer management
         +icons
-       )
+        )
        (undo              ; persistent, smarter undo for your inevitable mistakes
         +tree
-       )
+        )
        vc                ; version-control and Emacs, sitting in a tree
 
        :term
@@ -105,8 +105,8 @@
        :checkers
        (syntax              ; tasing you for every semicolon you forget
         +childframe
-        ;; +flymake
-       )
+        +flymake
+        )
        (spell
         +flyspell
         ) ; tasing you for misspelling mispelling
@@ -118,10 +118,10 @@
        (debugger          ; FIXME stepping through code, to help you add bugs
         +lsp
         )
-       ;;direnv
-       ;; (docker
-       ;;  +lsp
-       ;; )
+       direnv
+       (docker
+        +lsp
+        )
        editorconfig      ; let someone else argue about tabs vs spaces
        ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
@@ -133,7 +133,7 @@
         )
        (lsp               ; M-x vscode
         +peek
-       )
+        )
        (magit             ; a git porcelain for Emacs
         +forge
         )
@@ -158,7 +158,7 @@
        (cc
         +lsp
         +tree-sitter
-           )         ; C > C++ == 1
+        )         ; C > C++ == 1
        ;;clojure           ; java with a lisp
        ;;common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
@@ -197,13 +197,13 @@
        (javascript        ; all(hope(abandon(ye(who(enter(here))))))
         +lsp
         +tree-sitter
-       )
+        )
        ;;julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        (latex             ; writing papers in Emacs has never been so fun
         +lsp
         +cdlatex
-       )
+        )
        ;;lean              ; for folks with too much to prove
        ;;ledger            ; be audit you can be
        ;;lua               ; one-based indices? one-based indices
@@ -217,6 +217,8 @@
         ;; +brain
         ;; +contacts
         +dragndrop
+        +journal
+        +jupyter
         +gnuplot
         +noter
         ;; +pandoc
@@ -232,7 +234,7 @@
         +pyenv
         +pyright
         +tree-sitter
-       )
+        )
        ;;qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6
@@ -273,7 +275,7 @@
        :config
        ;;literate
        (default
-         +bindings
-         +smartparens
-         )
+        +bindings
+        +smartparens
+        )
        )

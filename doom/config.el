@@ -13,7 +13,7 @@
 (setq auth-sources '("~/.authinfo"))
 
                 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                ;; IDE CONFIGS -- improve the developer experience! ;;
+;; IDE CONFIGS -- improve the developer experience! ;;
                 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
@@ -30,10 +30,11 @@
 ;;
 ;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-(setq
-   doom-font (font-spec :family "Fira Code" :size 14 :weight 'regular)
-   doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14 :weight 'regular)
-)
+
+;; (setq
+;;   doom-font (font-spec :family "Fira Code" :size 13 :weight 'regular)
+;;   doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13 :weight 'regular)
+;; )
 
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
@@ -55,16 +56,32 @@
 ;; (setq company-idle-delay nil)
 ;; So that flycheck doesn't automaticaly run all the checks everytime you write a new line.
 ;; (setq flycheck-check-syntax-automatically '(save mode-enable))
- '(flycheck-check-syntax-automatically (quote (save idle-change mode-
-enabled)))
- '(flycheck-idle-change-delay 4) ;; Set delay based on what suits you the best
+'(flycheck-check-syntax-automatically (quote (save idle-change mode-
+                                              enabled)))
+'(flycheck-idle-change-delay 4) ;; Set delay based on what suits you the best
 
 (after! lsp
   (setq lsp-auto-configure t)
   )
 
+(setq +format-on-save-enabled-modes
+      '(not emacs-lisp-mode  ; elisp's mechanisms are good enough
+	sql-mode         ; sqlformat is currently broken
+	tex-mode         ; latexindent is broken
+        python-mode      ; use autopep8-mode (minor mode) instead
+	latex-mode))
+
+(setq-hook! 'python-mode-hook
+  +format-with-lsp nil)
+
+;; for python, use autopep8 instead
+(use-package py-autopep8
+  :hook ((python-mode) . py-autopep8-mode))
+
+
+
                         ;;;;;;;;;;;;;;;;;;;;;;;
-                        ;; ORG MODE CONFIGS! ;;
+;; ORG MODE CONFIGS! ;;
                         ;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; If you use `org' and don't want your org files in the default location below,
@@ -140,7 +157,6 @@ enabled)))
 (set-frame-parameter (selected-frame) 'alpha '(90))
 (add-to-list 'default-frame-alist '(alpha . (90)))
 
-
 (defun toggle-transparency ()
   (interactive)
   (let ((alpha (frame-parameter nil 'alpha)))
@@ -163,8 +179,8 @@ enabled)))
 
 ;; ======================= Ritesh's preferred packages ==========================
 
-(use-package! latex-preview-pane)
-(latex-preview-pane-enable)
+;;(use-package! latex-preview-pane)
+;;(latex-preview-pane-enable)
 
 ;;(use-package! circadian
 ;;  :config
@@ -174,17 +190,10 @@ enabled)))
 ;;                           (:sunset  . doom-outrun-electric)))
 ;;  (circadian-setup))
 
-(use-package! py-autopep8
-  :demand t
-  :after python
-  :config
-  ;; (add-hook! 'python-mode-hook #'py-autopep8-enable-on-save-mode)
-  (setq-hook! 'python-mode-hook +format-with 'py-autopep8)
-  ;; Feel free to throw your own personal keybindings here
-  ;; (map! :leader :desc "Blacken Buffer" "m b b" #'python-black-buffer)
-  ;; (map! :leader :desc "Blacken Region" "m b r" #'python-black-region)
-  ;; (map! :leader :desc "Blacken Statement" "m b s" #'python-black-statement)
-  )
+
+(after! dap-mode
+  (setq dap-python-debugger 'debugpy))
+
 
 (after! magit
   (setq magit-revision-show-gravatars '("^Author: t" . "^Commit: t"))
@@ -197,12 +206,12 @@ enabled)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (after! hl-todo
   (setq hl-todo-keyword-faces
-	'(("TODO"   . "#FF0000")
-	  ("FIXME"  . "#FF0000")
-	  ("DEBUG"  . "#A020F0")
-	  ("GOTCHA" . "#FF4500")
-	  ("STUB"   . "#1E90FF")
-	  ("DEPRECATED"   . "#00FF00")
+        '(("TODO"   . "#FF0000")
+          ("FIXME"  . "#FF0000")
+          ("DEBUG"  . "#A020F0")
+          ("GOTCHA" . "#FF4500")
+          ("STUB"   . "#1E90FF")
+          ("DEPRECATED"   . "#00FF00")
           )
         )
   )
