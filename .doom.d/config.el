@@ -13,7 +13,7 @@
 (setq auth-sources '("~/.authinfo"))
 
                 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                ;; IDE CONFIGS -- improve the developer experience! ;;
+;; IDE CONFIGS -- improve the developer experience! ;;
                 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
@@ -31,9 +31,9 @@
 ;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
 (setq
-   doom-font (font-spec :family "Fira Code" :size 14 :weight 'regular)
-   doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14 :weight 'regular)
-)
+ doom-font (font-spec :family "Fira Code" :size 18 :weight 'regular)
+ doom-variable-pitch-font (font-spec :family "Fira Sans" :size 18 :weight 'regular)
+ )
 
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
@@ -55,16 +55,26 @@
 ;; (setq company-idle-delay nil)
 ;; So that flycheck doesn't automaticaly run all the checks everytime you write a new line.
 ;; (setq flycheck-check-syntax-automatically '(save mode-enable))
- '(flycheck-check-syntax-automatically (quote (save idle-change mode-
-enabled)))
- '(flycheck-idle-change-delay 4) ;; Set delay based on what suits you the best
+'(flycheck-check-syntax-automatically (quote (save idle-change mode-
+                                              enabled)))
+'(flycheck-idle-change-delay 4) ;; Set delay based on what suits you the best
 
 (after! lsp
   (setq lsp-auto-configure t)
   )
 
+;; config elixir-lsp
+(use-package! lsp-mode
+  :commands lsp
+  :ensure t
+  :diminish lsp-mode
+  :hook
+  (elixir-mode . lsp)
+  :init
+  (add-to-list 'exec-path "/Users/ritesh/elixir-ls/release"))
+
                         ;;;;;;;;;;;;;;;;;;;;;;;
-                        ;; ORG MODE CONFIGS! ;;
+;; ORG MODE CONFIGS! ;;
                         ;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; If you use `org' and don't want your org files in the default location below,
@@ -210,3 +220,19 @@ enabled)))
 (custom-set-faces!
   '(mode-line :family "IBM Plex" :height 0.9)
   '(mode-line-inactive :family "IBM Plex" :height 0.9))
+
+
+
+(use-package blamer
+  :bind (("s-i" . blamer-show-commit-info))
+  :defer 20
+  :custom
+  (blamer-idle-time 0.3)
+  (blamer-min-offset 20)
+  :custom-face
+  (blamer-face ((t :foreground "#7a88cf"
+                    :background nil
+                    :height 140
+                    :italic t)))
+  :config
+  (global-blamer-mode 1))
