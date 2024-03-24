@@ -51,13 +51,28 @@
 (setq display-line-numbers-type 'relative)
 
 
+(setq whitespace-style '(face tabs spaces trailing lines space-before-tab newline indentation empty space-after-tab space-mark tab-mark newline-mark missing-newline-at-eof))
+
+
+;; =======> Company (Autocomplete) Settings
+;; >> only suggest when you ask manually:
+(setq company-idle-delay 0.2)
+(setq company-minimum-prefix-length 1)
+(setq company-selection-wrap-around t)
+; Use tab key to cycle through suggestions.
+; ('tng' means 'tab and go')
+(add-hook 'after-init-hook 'company-tng-mode)
+
+(use-package company-box
+ :hook (company-mode . company-box-mode))
+
 ;; >> only suggest when you ask manuall:
 ;; (setq company-idle-delay nil)
 ;; So that flycheck doesn't automaticaly run all the checks everytime you write a new line.
 ;; (setq flycheck-check-syntax-automatically '(save mode-enable))
 '(flycheck-check-syntax-automatically (quote (save idle-change mode-
                                               enabled)))
-'(flycheck-idle-change-delay 4) ;; Set delay based on what suits you the best
+'(flycheck-idle-change-delay 0.2) ;; Set delay based on what suits you the best
 
 (after! lsp
   (setq lsp-auto-configure t)
@@ -68,14 +83,25 @@
   :commands lsp
   :ensure t
   :diminish lsp-mode
-  :hook
-  (elixir-mode . lsp)
+  ;; :hook
+  ;; (elixir-mode . lsp)
   :init
-  (add-to-list 'exec-path "/Users/ritesh/elixir-ls/release"))
+  (add-to-list 'exec-path "/opt/homebrew/bin/")) ;; installed via brew on macos
 
-                        ;;;;;;;;;;;;;;;;;;;;;;;
+(after! lsp-mode
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection '("nextls" "--stdio"))
+                    :multi-root t
+                    :activation-fn (lsp-activate-on "elixir")
+                    :server-id 'next-ls)))
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;
 ;; ORG MODE CONFIGS! ;;
-                        ;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -162,7 +188,7 @@
                     ((numberp (cadr alpha)) (cadr alpha)))
               100)
          '(90) '(100)))))
-(global-set-key (kbd "C-c t") 'toggle-transparency)
+(global-set-key (kbd "C-c t") #'toggle-transparency)
 
 ;; Set transparency of emacs
 (defun transparency (value)
@@ -176,13 +202,19 @@
 (use-package! latex-preview-pane)
 (latex-preview-pane-enable)
 
-;;(use-package! circadian
-;;  :config
-;;  (setq calendar-latitude 42.653225)
-;;  (setq calendar-longitude -80.383186)
-;;  (setq circadian-themes '((:sunrise . doom-acario-light)
-;;                           (:sunset  . doom-outrun-electric)))
-;;  (circadian-setup))
+;; my usual places;
+(defvar sg-lat 1.334510)
+(defvar sg-long 103.721200)
+(defvar to-lat 43.653225)
+(defvar to-long -79.383186)
+
+(use-package! circadian
+  :config
+  (setq calendar-latitude to-lat)
+  (setq calendar-longitude to-long)
+  (setq circadian-themes '((:sunrise . doom-one-light)
+                           (:sunset  . doom-ir-black)))
+  (circadian-setup))
 
 (use-package! py-autopep8
   :demand t
@@ -217,9 +249,13 @@
         )
   )
 
+(use-package magit-todos
+  :after magit
+  :config (magit-todos-mode 1))
+
 (custom-set-faces!
-  '(mode-line :family "IBM Plex" :height 0.9)
-  '(mode-line-inactive :family "IBM Plex" :height 0.9))
+  '(mode-line :family "Fira Code" :height 0.9)
+  '(mode-line-inactive :family "Fira Code" :height 0.9))
 
 
 
