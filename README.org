@@ -1,0 +1,40 @@
+# dotfiles
+* Dotfiles
+This is a quick and dirty way to organise my dotfiles.
+
+** Current Doom Info
+#+begin_src bash
+ॐ ❯ doom info
+generated  Jun 05, 2024 12:34:39
+system     MacOS 14.5 Darwin 23.5.0 arm64
+emacs      29.1 EMACSDIR=~/.config/emacs/
+           EMACS=/opt/homebrew/Cellar/emacs-mac/emacs-29.1-mac-10.0/Emacs.app/Contents/MacOS/Emacs
+doom       3.0.0-pre PROFILE=_@0 grafted, HEAD -> master, origin/master,
+           origin/HEAD 9620bb4 2024-04-18 14:20:48 -0400 ~/.config/doom/
+shell      /bin/zsh
+features   ACL DBUS GLIB GMP GNUTLS JSON LCMS2 LIBXML2 MODULES NATIVE_COMP
+           NOTIFY KQUEUE PDUMPER RSVG SQLITE3 THREADS TOOLKIT_SCROLL_BARS
+           TREE_SITTER WEBP XIM XWIDGETS ZLIB
+traits     batch server-running envvar-file custom-file
+modules    :config use-package :completion (corfu +icons +dabbrev +orderless)
+           (ivy +childframe +fuzzy +icons +prescient) :ui deft doom
+           doom-dashboard doom-quit (emoji +ascii +github +unicode) hl-todo
+           indent-guides (ligatures +extra) modeline nav-flash ophints (popup
+           +all +defaults) (treemacs +lsp) unicode (vc-gutter +pretty +diff-hl)
+           vi-tilde-fringe (window-select +numbers) workspaces zen :editor (evil
+           +everywhere) file-templates fold (format +onsave) snippets word-wrap
+           :emacs (dired +ranger +icons) electric (ibuffer +icons) undo vc :term
+           vterm :checkers (syntax +childframe) (spell +flyspell) grammar :tools
+           (debugger +lsp) (docker +lsp) editorconfig ein (eval +overlay)
+           (lookup +dictionary +offline +docsets) (lsp +peek) (magit +forge) pdf
+           rgb tree-sitter :os macos (tty +osc) :lang (cc +lsp +tree-sitter)
+           data (elixir +lsp +tree-sitter) emacs-lisp (erlang +lsp +tree-sitter)
+           (go +lsp +tree-sitter) (graphql +lsp) (json +lsp +tree-sitter) (java
+           +tree-sitter +lsp) (javascript +lsp +tree-sitter) (latex +lsp +fold
+           +cdlatex +latexmk) (markdown +grip) (nix +tree-sitter +lsp) (org
+           +dragndrop +gnuplot +hugo +journal +jupyter +noter +pandoc +pomodoro
+           +present +pretty) (python +lsp +pyright +tree-sitter +cython +poetry)
+           (sh +lsp +tree-sitter) (web +lsp +tree-sitter) (yaml +lsp
+           +tree-sitter) :app calendar :config (default +bindings +smartparens)
+packages   (hl-todo) (blamer) (magit-todos) (magit-todos) (circadian)
+#+end_src
