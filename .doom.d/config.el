@@ -6,15 +6,18 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
+;; (setq user-full-name "John Doe"
+;;       user-mail-address "john@doe.com")
 (setq user-full-name "Ritesh Kumar"
       user-mail-address "ritesh@emerald.pink")
 
 ;; auth sources used by bots, outlined in documentation: https://magit.vc/manual/ghub.html#Storing-a-Token
 (setq auth-sources '("~/.authinfo"))
 
-                ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                ;; IDE CONFIGS -- improve the developer experience! ;;
-                ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; IDE CONFIGS -- improving the developer experience ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
@@ -22,7 +25,7 @@
 ;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
 ;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
 ;;   presentations or streaming.
-;; - `doom-unicode-font' -- for unicode glyphs
+;; - `doom-symbol-font' -- for symbols
 ;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
 ;;
 ;; See 'C-h v doom-font' for documentation and more examples of what they
@@ -30,12 +33,12 @@
 ;;
 ;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-(setq
-   doom-font (font-spec :family "Fira Code" :size 14 :weight 'regular)
-   doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14 :weight 'regular)
-)
-
 ;;
+(setq
+ doom-font (font-spec :family "Fira Code" :size 18 :weight 'regular)
+ doom-variable-pitch-font (font-spec :family "Fira Sans" :size 18 :weight 'regular)
+ )
+
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
 ;; refresh your font settings. If Emacs still can't find your font, it likely
@@ -45,35 +48,25 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-ir-black)
+;; =============== Slash image! ============================
+(setq fancy-splash-image (concat doom-user-dir "images/fam_splash_v0 3.jpg"))
+
+
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type 'relative)
+;; (setq whitespace-style '(face tabs spaces trailing lines space-before-tab newline indentation empty space-after-tab space-mark tab-mark newline-mark missing-newline-at-eof))
 
-
-;; >> only suggest when you ask manuall:
-;; (setq company-idle-delay nil)
-;; So that flycheck doesn't automaticaly run all the checks everytime you write a new line.
-;; (setq flycheck-check-syntax-automatically '(save mode-enable))
- '(flycheck-check-syntax-automatically (quote (save idle-change mode-
-enabled)))
- '(flycheck-idle-change-delay 4) ;; Set delay based on what suits you the best
-
-(after! lsp
-  (setq lsp-auto-configure t)
-  )
-
-                        ;;;;;;;;;;;;;;;;;;;;;;;
-                        ;; ORG MODE CONFIGS! ;;
-                        ;;;;;;;;;;;;;;;;;;;;;;;
-
+;;;;;;;;;;;;;;;;;;;;;;;
+;; ORG MODE CONFIGS! ;;
+;;;;;;;;;;;;;;;;;;;;;;;
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
 (global-set-key (kbd "C-c l") #'org-store-link)
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
-
 
 ;; Each sequence of keywords defines its own todo states, this is how we can set custom workflows
 ;; NOTE: it's good if the keywords are all unique!!
@@ -90,8 +83,10 @@ enabled)))
 (setq org-log-done 'note) ;; when a todo is done, records a note along w a timestamp
 (setq org-log-redeadline 'note) ;; when a todo is done, records a note along w a timestamp
 
+;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;    ;;;;;;;;;;;;;;;;;;;;;;
 
-  ;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;    ;;;;;;;;;;;;;;;;;;;;;;
+
+
 
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
@@ -126,13 +121,10 @@ enabled)))
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-;; =============== Custom Variables ============================
-(setq fancy-splash-image (concat doom-user-dir "images/fam_splash_v0 3.jpg"))
 
-
-
-
-;; ======================= Ritesh's Custom Functions ===========================
+;;;;;;;;;;;;;;;;;;;;;;
+;; CUSTOM FUNCTIONS ;;
+;;;;;;;;;;;;;;;;;;;;;;
 
 ;;>> transparency things:
 ;;(set-frame-parameter (selected-frame) 'alpha '(<active> . <inactive>))
@@ -152,49 +144,22 @@ enabled)))
                     ((numberp (cadr alpha)) (cadr alpha)))
               100)
          '(90) '(100)))))
-(global-set-key (kbd "C-c t") 'toggle-transparency)
+(global-set-key (kbd "C-c t") #'toggle-transparency)
 
-;; Set transparency of emacs
-(defun transparency (value)
-  "Sets the transparency of the frame window. 0=transparent/100=opaque"
-  (interactive "nTransparency Value 0 - 100 opaque:")
+;; Set opacity of emacs frames
+(defun opacity (value)
+  "Sets the opacity of the frame window. 0=transparent/100=opaque"
+  (interactive "nOpacity Value 0 - 100 opaque:")
   (set-frame-parameter (selected-frame) 'alpha value))
 
 
-;; ======================= Ritesh's preferred packages ==========================
-
-(use-package! latex-preview-pane)
-(latex-preview-pane-enable)
-
-;;(use-package! circadian
-;;  :config
-;;  (setq calendar-latitude 42.653225)
-;;  (setq calendar-longitude -80.383186)
-;;  (setq circadian-themes '((:sunrise . doom-acario-light)
-;;                           (:sunset  . doom-outrun-electric)))
-;;  (circadian-setup))
-
-(use-package! py-autopep8
-  :demand t
-  :after python
-  :config
-  ;; (add-hook! 'python-mode-hook #'py-autopep8-enable-on-save-mode)
-  (setq-hook! 'python-mode-hook +format-with 'py-autopep8)
-  ;; Feel free to throw your own personal keybindings here
-  ;; (map! :leader :desc "Blacken Buffer" "m b b" #'python-black-buffer)
-  ;; (map! :leader :desc "Blacken Region" "m b r" #'python-black-region)
-  ;; (map! :leader :desc "Blacken Statement" "m b s" #'python-black-statement)
-  )
-
-(after! magit
-  (setq magit-revision-show-gravatars '("^Author: t" . "^Commit: t"))
-  (setq magit-diff-refine-hunk 'all)
-  )
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Use these faces to outline searchable comments in code ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;
+;; OVERRIDES ;;
+;;;;;;;;;;;;;;;
+
+;; outlines searchable comments in the code:
 (after! hl-todo
   (setq hl-todo-keyword-faces
 	'(("TODO"   . "#FF0000")
@@ -207,6 +172,62 @@ enabled)))
         )
   )
 
-(custom-set-faces!
-  '(mode-line :family "IBM Plex" :height 0.9)
-  '(mode-line-inactive :family "IBM Plex" :height 0.9))
+(after! magit
+  (setq magit-revision-show-gravatars '("^Author: t" . "^Commit: t"))
+  (setq magit-diff-refine-hunk 'all)
+  )
+
+
+(use-package! latex-preview-pane)
+(latex-preview-pane-enable)
+
+(use-package magit-todos
+  :after magit
+  :config (magit-todos-mode 1)
+  )
+
+
+(use-package blamer
+  :bind (("s-i" . blamer-show-commit-info))
+  :defer 20
+  :custom
+  (blamer-idle-time 0.3)
+  (blamer-min-offset 20)
+  :custom-face
+  (blamer-face ((t :foreground "#7a88cf"
+                   :background nil
+                   :height 140
+                   :italic t)))
+  :config
+  (global-blamer-mode 1))
+
+;; ox-hugo configurations
+(use-package ox-hugo
+  :ensure t   ;Auto-install the package from Melpa
+  ;; :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
+  :after ox)
+
+
+                                        ; my usual places;
+(defvar sg-lat 1.334510)
+(defvar sg-long 103.721200)
+(defvar to-lat 43.653225)
+(defvar to-long -79.383186)
+(use-package! circadian
+  :ensure t
+  :config
+  ;; (setq calendar-latitude sg-lat)
+  ;; (setq calendar-longitude sg-long)
+  (setq calendar-latitude to-lat)
+  (setq calendar-longitude to-long)
+  (setq circadian-themes '((:sunrise . doom-one-light)
+                           (:sunset  . doom-ir-black)))
+  (circadian-setup))
+
+(add-hook 'circadian-after-load-theme-hook
+          #'(lambda (theme)
+              ;; Line numbers appearance
+              (setq linum-format 'linum-format-func)
+              ;; Cursor
+              (set-default 'cursor-type 'box)
+              (set-cursor-color "#F52503")))
