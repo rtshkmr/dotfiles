@@ -54,3 +54,6 @@
 (package! magit-todos)
 (package! magit-todos)
 (package! circadian)
+(package! ob-mermaid)
+(package! org-modern)
+(package! toc-org)
