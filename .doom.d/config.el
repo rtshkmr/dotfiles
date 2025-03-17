@@ -295,6 +295,7 @@
 ;;        (optimize-char-table table)
 ;;        (set-char-table-parent table char-table)
 ;;        (setq char-width-table table)))))
+
 (use-package ob-mermaid
   :after org
   :config
@@ -302,3 +303,16 @@
 
 (require 'toc-org)
 (add-hook 'org-mode-hook 'toc-org-mode)
+
+
+(elfeed-org)
+(setq rmh-elfeed-org-files (list "~/org/rss/elfeed.org"))
+
+(after! projectile
+  (setq projectile-project-root-files-bottom-up
+        (remove ".git" projectile-project-root-files-bottom-up)))
+
+
+(setq modus-operandi-palette-overrides
+      '((fg-list-bullet fg-main)
+        (fg-list-numeric fg-main)))
