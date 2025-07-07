@@ -12,7 +12,9 @@
       user-mail-address "ritesh@emerald.pink")
 
 ;; auth sources used by bots, outlined in documentation: https://magit.vc/manual/ghub.html#Storing-a-Token
-(setq auth-sources '("~/.authinfo"))
+;; (setq auth-sources '("~/.authinfo"))
+(setq auth-sources '("~/.authinfo.gpg"))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -37,7 +39,20 @@
 (setq
  doom-font (font-spec :family "Fira Code" :size 18 :weight 'regular)
  doom-variable-pitch-font (font-spec :family "Fira Sans" :size 18 :weight 'regular)
+ ;; doom-symbol-font (font-spec :family "Symbola" :size 22 :weight 'Regular)
  )
+
+;; (defun my-custom-splash-message ()
+;;   "Insert a custom splash message with specific font and size."
+;;   (let ((message "Welcome to Doom Emacs!"))
+;;     (insert (propertize message 'face '(:height 2.0 :weight bold :family "Fira Sans")))))
+
+(defun get-custom-splash-message ()
+  "Insert a centered custom splash message with specific font and size."
+  (insert (propertize
+           (+doom-dashboard--center +doom-dashboard--width "\n🍀 Let's do great things today 🍀\n")
+           'face '(:height 2.0 :weight bold :family "Fira Sans"))))
+
 
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -49,8 +64,14 @@
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-ir-black)
 ;; =============== Slash image! ============================
-(setq fancy-splash-image (concat doom-user-dir "images/fam_splash_v0 3.jpg"))
+(setq fancy-splash-image (concat doom-user-dir "images/lake_louise_sunrise.png"))
+;; Remove default short menu from dashboard
+(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
 
+;; Prepend custom splash message to dashboard functions
+(add-hook! '+doom-dashboard-functions :prepend #'get-custom-splash-message)
+;; let frame be full size of current screen:
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
@@ -77,11 +98,68 @@
 ;; note with timestamp) in parentheses after each keyword
 (setq org-todo-keywords
       '((sequence "TODO(t)" "|" "DONE(d)")
-        (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
         (sequence "|" "CANCELED(c)")))
 
 (setq org-log-done 'note) ;; when a todo is done, records a note along w a timestamp
 (setq org-log-redeadline 'note) ;; when a todo is done, records a note along w a timestamp
+
+;; note: doom has it's own templates, so the var list has to be modded instead
+(after! org
+  (add-to-list 'org-capture-templates
+               '("c"
+                 "Clocking templates"
+                 ))
+  ;; intent: add more context about the currently running task for future reference
+  (add-to-list 'org-capture-templates
+               '("cn"
+                 "Add context to running clock"
+                 plain (clock)
+                 "+ Note @ %U \n Context \n %i %a"))
+  )
+
+
+(defun my/org-html-collapsible-src-block (src-block contents info)
+  "Wrap source blocks in a collapsible HTML container."
+  (let ((lang (org-element-property :language src-block)))
+    (format "<div class=\"collapsible\">
+  <div class=\"collapsible-header\">Show/Hide %s Code</div>
+  <div class=\"collapsible-content\">
+%s
+  </div>
+</div>"
+            (capitalize (or lang "Source"))
+            (org-export-with-backend 'html src-block contents info))))
+
+(defun my/org-html-collapsible-quote-block (quote-block contents info)
+  "Wrap quote blocks in a collapsible HTML container."
+  (format "<div class=\"collapsible\">
+  <div class=\"collapsible-header\">Show/Hide Quote</div>
+  <div class=\"collapsible-content\">
+%s
+  </div>
+</div>"
+          (org-export-with-backend 'html quote-block contents info)))
+
+(with-eval-after-load 'ox-html
+  (org-export-define-derived-backend 'my-html 'html
+    :translate-alist '((src-block . my/org-html-collapsible-src-block)
+                       (quote-block . my/org-html-collapsible-quote-block))))
+
+;; (defun my/org-export-to-html (&optional async subtreep visible-only body-only ext-plist)
+;;   "Export current buffer to a collapsible HTML file."
+;;   (interactive)
+;;   (org-export-to-file 'my-html
+;;       (org-export-output-file-name ".html" subtreep)
+;;     async subtreep visible-only body-only ext-plist))
+
+(defun my/org-export-to-html (&optional async subtreep visible-only body-only ext-plist)
+  "Export current buffer to a collapsible HTML file and open it in the default web browser."
+  (interactive)
+  (let ((output-file (org-export-to-file 'my-html
+                         (org-export-output-file-name ".html" subtreep)
+                       async subtreep visible-only body-only ext-plist)))
+    (when output-file
+      (browse-url (concat "file://" (expand-file-name output-file))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;    ;;;;;;;;;;;;;;;;;;;;;;
 
@@ -199,7 +277,7 @@
                    :height 140
                    :italic t)))
   :config
-  (global-blamer-mode 1))
+  (global-blamer-mode 0))
 
 ;; ox-hugo configurations
 (use-package ox-hugo
@@ -218,16 +296,69 @@
   :config
   ;; (setq calendar-latitude sg-lat)
   ;; (setq calendar-longitude sg-long)
-  (setq calendar-latitude to-lat)
-  (setq calendar-longitude to-long)
-  (setq circadian-themes '((:sunrise . doom-one-light)
-                           (:sunset  . doom-ir-black)))
+  (setq calendar-latitude sg-lat)
+  (setq calendar-longitude sg-long)
+  (setq circadian-themes '((:sunrise . modus-operandi)
+                           (:sunset  . modus-vivendi)))
   (circadian-setup))
 
 (add-hook 'circadian-after-load-theme-hook
-          #'(lambda (theme)
-              ;; Line numbers appearance
-              (setq linum-format 'linum-format-func)
-              ;; Cursor
-              (set-default 'cursor-type 'box)
-              (set-cursor-color "#F52503")))
+          '(lambda (theme)
+             ;; Line numbers appearance
+             (setq linum-format 'linum-format-func)
+             ;; Cursor
+             (set-default 'cursor-type 'box)
+             (set-cursor-color "#F52503")))
+
+;; DOOM Modeline configs
+(setq doom-modeline-height 28) ; Set minimum height
+
+(custom-set-faces!
+  '(mode-line :family "Fira Code" :height 0.9)
+  '(mode-line-inactive :family "Fira Code" :height 0.8))
+
+;;(add-hook! 'doom-modeline-mode-hook
+;;  (let ((char-table char-width-table))
+;;    (while (setq char-table (char-table-parent char-table)))
+;;    (dolist (pair doom-modeline-rhs-icons-alist)
+;;      (let ((width 2)  ; <-- tweak this
+;;            (chars (cdr pair))
+;;            (table (make-char-table nil)))
+;;        (dolist (char chars)
+;;          (set-char-table-range table char width))
+;;        (optimize-char-table table)
+;;        (set-char-table-parent table char-table)
+;;        (setq char-width-table table)))))
+
+(use-package ob-mermaid
+  :after org
+  :config
+  (setq ob-mermaid-cli-path "/Users/rtshkmr/.nvm/versions/node/v20.13.1/bin/mmdc"))  ; Adjust path as needed
+
+(require 'toc-org)
+(add-hook 'org-mode-hook 'toc-org-mode)
+
+
+(elfeed-org)
+(setq rmh-elfeed-org-files (list "~/org/rss/elfeed.org"))
+
+(after! projectile
+  (setq projectile-project-root-files-bottom-up
+        (remove ".git" projectile-project-root-files-bottom-up))
+  (setq projectile-auto-discover nil)
+  )
+
+;; Modus themes gave me some issues, this allows me to set the bullet list faces correctly, based on light/dark
+(add-hook 'modus-themes-after-load-theme-hook
+          (lambda ()
+            (pcase modus-themes--current-theme
+              ('modus-operandi
+               (modus-themes-with-colors
+                 (custom-set-faces!
+                   `(org-list-dt :foreground ,blue-intense)
+                   `(org-list    :foreground ,blue-intense))))
+              ('modus-vivendi
+               (modus-themes-with-colors
+                 (custom-set-faces!
+                   `(org-list-dt :foreground ,cyan)
+                   `(org-list    :foreground ,cyan)))))))

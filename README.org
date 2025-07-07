@@ -41,4 +41,31 @@ modules    :config use-package :completion (corfu +icons +dabbrev
 	   +bindings +smartparens)
 packages   (hl-todo) (blamer) (magit-todos) (magit-todos) (circadian)
 #+end_src
+
+** MacOS Specific
+*** TODO Creating launchd service for emacs-daemon
+Motivation:
+I'm on MacOS now and am running emacs that on the doom starter pack.
+My workflows involve creating frames for discrete contexts instead of just using the workspaces feature. This allows me to put windows in different virtual desktop for separating out these contexts and aiding my context-switching.
+
+I would really like to setup emacsclient properly here, but the available info seems outdated on how to do so. Current [[https://www.emacswiki.org/emacs/EmacsAsDaemon#h5o-11][emacswiki entry]] on the daemon.
+
+[[https://systemcrafters.net/emacs-tips/using-the-emacs-daemon/][Systemcrafter's blog post]] might be useful as well.
+
+- [[https://web.archive.org/web/20091207041756/http://cubiclemuses.com/cm/articles/2009/08/06/emacs-and-os-x-launchd][ref]]
+  Also, launchctl has changed, see [[https://gist.github.com/masklinn/a532dfe55bdeab3d60ab8e46ccc38a68][this gist]] to understand instead:
+
+  #+begin_src bash
+# validate plist file using this:
+# plutil -lint /path/to/your/plist/file.plist
+plutil -lint /Library/LaunchAgents/gnu.emacs.daemon.plist
+  #+end_src
+
+  #+begin_src bash
+# launchctl has new syntax for loading plist
+# sudo launchctl bootstrap system /Library/LaunchDaemons/com.example.service.plist
+
+sudo launchctl bootstrap system  /Library/LaunchAgents/gnu.emacs.daemon.plist
+  #+end_src
+
 ** Another

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+  <head>
+    <title>Feeds of Ritesh Kumar from Inoreader [https://www.inoreader.com]</title>
+  </head>
+  <body>
+    <outline text="Protesilaos Stavrou Coding Blog" title="Protesilaos Stavrou Coding Blog" type="rss" xmlUrl="https://protesilaos.com/codelog.xml" htmlUrl="https://protesilaos.com/"/>
+    <outline text="NYT &gt; Home Page" title="NYT &gt; Home Page" type="rss" xmlUrl="https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml" htmlUrl="https://www.nytimes.com/pages/index.html?partner=rss&amp;emc=rss"/>
+    <outline text="deployment status" title="deployment status">
+      <outline text="Supabase" title="Supabase" type="rss" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCNTVzV1InxHV-YR0fSajqPQ" htmlUrl="https://www.youtube.com/channel/UCNTVzV1InxHV-YR0fSajqPQ"/>
+    </outline>
+    <outline text="Singapore News" title="Singapore News">
+      <outline text="The Online Citizen" title="The Online Citizen" type="rss" xmlUrl="http://theonlinecitizen.com/feed" htmlUrl="https://www.theonlinecitizen.com/"/>
+      <outline text="CNA" title="CNA" type="rss" xmlUrl="https://www.channelnewsasia.com/rssfeeds/8396082" htmlUrl="http://www.channelnewsasia.com/"/>
+      <outline text="News RSS" title="News RSS" type="rss" xmlUrl="https://www.gov.sg/rss/newsrss" htmlUrl="http://www.gov.sg/rss/newsrss"/>
+      <outline text="RSS Feeds" title="RSS Feeds" type="rss" xmlUrl="https://www.gov.sg/rss/allfeeds" htmlUrl="http://www.gov.sg/rss/allfeeds"/>
+      <outline text="Singapore" title="Singapore" type="rss" xmlUrl="https://www.asiaone.com/rss-feed/2" htmlUrl="https://www.asiaone.com/rss-feed/2"/>
+      <outline text="Singapore Business Review" title="Singapore Business Review" type="rss" xmlUrl="https://sbr.com.sg/rss2/news" htmlUrl="https://sbr.com.sg/rss2/news"/>
+      <outline text="Singapore – Asian Correspondent" title="Singapore – Asian Correspondent" type="rss" xmlUrl="https://asiancorrespondent.com/section/countries/singapore/feed" htmlUrl="https://asiancorrespondent.com/"/>
+      <outline text="The Independent Singapore" title="The Independent Singapore" type="rss" xmlUrl="http://theindependent.sg/feed" htmlUrl="http://theindependent.sg/"/>
+      <outline text="Today Online - Hot news" title="Today Online - Hot news" type="rss" xmlUrl="https://www.todayonline.com/hot-news/feed" htmlUrl="https://www.todayonline.com/authors/hedirman-supian"/>
+    </outline>
+    <outline text="Toronto" title="Toronto">
+      <outline text="blogTO" title="blogTO" type="rss" xmlUrl="https://feeds.feedburner.com/blogto" htmlUrl="https://www.blogto.com/"/>
+      <outline text="CBC | Canada News" title="CBC | Canada News" type="rss" xmlUrl="https://rss.cbc.ca/lineup/canada.xml" htmlUrl="https://www.cbc.ca/canada/?cmp=rss"/>
+      <outline text="Toronto Police Service - News Releases" title="Toronto Police Service - News Releases" type="rss" xmlUrl="https://www.torontopolice.on.ca/newsreleases/rss.php" htmlUrl="https://www.torontopolice.on.ca/newsreleases/"/>
+      <outline text="Toronto Life" title="Toronto Life" type="rss" xmlUrl="https://torontolife.com/feed/" htmlUrl="https://torontolife.com/"/>
+      <outline text="City of Toronto - Weather Alert - Environment Canada" title="City of Toronto - Weather Alert - Environment Canada" type="rss" xmlUrl="https://weather.gc.ca/rss/battleboard/on61_e.xml" htmlUrl="http://www.meteo.gc.ca/rss/battleboard/on61_f.xml"/>
+    </outline>
+    <outline text="Commentaries" title="Commentaries">
+      <outline text="Aeon" title="Aeon" type="rss" xmlUrl="http://www.aeonmagazine.com/feed/" htmlUrl="http://aeon.co/magazine"/>
+      <outline text="Commentary" title="Commentary" type="rss" xmlUrl="https://www.todayonline.com/feed/commentary" htmlUrl="https://www.todayonline.com/feed/commentary"/>
+      <outline text="Graphic detail" title="Graphic detail" type="rss" xmlUrl="https://www.economist.com/graphic-detail/rss.xml" htmlUrl="https://www.economist.com/graphic-detail/"/>
+      <outline text="Prospero" title="Prospero" type="rss" xmlUrl="https://www.economist.com/blogs/prospero/index.xml" htmlUrl="https://www.economist.com/node/21008659/index.xml"/>
+      <outline text="The Economist explains" title="The Economist explains" type="rss" xmlUrl="https://www.economist.com/the-economist-explains/rss.xml" htmlUrl="https://www.economist.com/the-economist-explains/"/>
+      <outline text="economist.com/blogs/bagehot/atom.xml" title="economist.com/blogs/bagehot/atom.xml" type="rss" xmlUrl="https://www.economist.com/blogs/bagehot/atom.xml" htmlUrl="https://www.economist.com/blogs/bagehot"/>
+      <outline text="economist.com/blogs/bartleby/atom.xml" title="economist.com/blogs/bartleby/atom.xml" type="rss" xmlUrl="http://www.economist.com/blogs/bartleby/atom.xml" htmlUrl="https://www.economist.com/blogs/bartleby"/>
+      <outline text="Paul Graham: Essays" title="Paul Graham: Essays" type="rss" xmlUrl="https://www.aaronsw.com/2002/feeds/pgessays.rss" htmlUrl="https://www.paulgraham.com/"/>
+    </outline>
+    <outline text="Computing" title="Computing">
+      <outline text="The Clean Code Blog" title="The Clean Code Blog" type="rss" xmlUrl="https://blog.cleancoder.com/atom.xml" htmlUrl="https://blog.cleancoder.com/"/>
+      <outline text="Hacker News" title="Hacker News" type="rss" xmlUrl="https://news.ycombinator.com/rss" htmlUrl="https://news.ycombinator.com/"/>
+      <outline text="Martin Fowler" title="Martin Fowler" type="rss" xmlUrl="https://martinfowler.com/feed.atom" htmlUrl="https://martinfowler.com/"/>
+      <outline text="Chris Richardson Consulting, Inc" title="Chris Richardson Consulting, Inc" type="rss" xmlUrl="https://chrisrichardson.net/feed.xml" htmlUrl="http://chrisrichardson.net/"/>
+      <outline text="A List Apart: The Full Feed" title="A List Apart: The Full Feed" type="rss" xmlUrl="https://alistapart.com/main/feed/" htmlUrl="http://alistapart.com/"/>
+      <outline text="Aphyr: Posts" title="Aphyr: Posts" type="rss" xmlUrl="https://aphyr.com/posts.atom" htmlUrl="http://aphyr.com/"/>
+      <outline text="Coding Horror" title="Coding Horror" type="rss" xmlUrl="https://feeds.feedburner.com/codinghorror?format=xml" htmlUrl="http://blog.codinghorror.com/"/>
+    </outline>
+    <outline text="DIY" title="DIY">
+      <outline text="IKEA Hackers" title="IKEA Hackers" type="rss" xmlUrl="https://www.ikeahackers.net/feed" htmlUrl="https://www.ikeahackers.net/"/>
+    </outline>
+    <outline text="Global News" title="Global News">
+      <outline text="Briefing" title="Briefing" type="rss" xmlUrl="https://www.economist.com/briefing/rss.xml" htmlUrl="https://www.economist.com/briefing/"/>
+      <outline text="Hacker News 50" title="Hacker News 50" type="rss" xmlUrl="https://feeds.feedburner.com/hacker-news-feed-50?format=xml" htmlUrl="https://news.ycombinator.com/"/>
+      <outline text="Reuters: World News" title="Reuters: World News" type="rss" xmlUrl="https://feeds.reuters.com/reuters/worldNews" htmlUrl="https://www.reuters.com"/>
+      <outline text="The world this week" title="The world this week" type="rss" xmlUrl="https://www.economist.com/the-world-this-week/rss.xml" htmlUrl="https://www.economist.com/the-world-this-week/"/>
+      <outline text="World News" title="World News" type="rss" xmlUrl="https://www.reddit.com/r/worldnews.rss" htmlUrl="https://www.reddit.com/r/worldnews/"/>
+    </outline>
+    <outline text="Photography" title="Photography">
+      <outline text="500px:" title="500px:" type="rss" xmlUrl="https://feed.500px.com/500px-best" htmlUrl="https://500px.com/photos.rss"/>
+      <outline text="Contemporary Daguerreotypes" title="Contemporary Daguerreotypes" type="rss" xmlUrl="http://www.cdags.org/feed/" htmlUrl="http://cdags.org/"/>
+      <outline text="Digital Photography School" title="Digital Photography School" type="rss" xmlUrl="https://feeds.feedburner.com/DigitalPhotographySchool" htmlUrl="https://digital-photography-school.com/"/>
+      <outline text="HIGHLIGHTED LIFE" title="HIGHLIGHTED LIFE" type="rss" xmlUrl="https://www.jamesnord.com/rss" htmlUrl="https://www.jamesnord.com/"/>
+      <outline text="Lens" title="Lens" type="rss" xmlUrl="https://lens.blogs.nytimes.com/feed/" htmlUrl="https://lens.blogs.nytimes.com/"/>
+      <outline text="PetaPixel" title="PetaPixel" type="rss" xmlUrl="https://feeds.feedburner.com/PetaPixel" htmlUrl="https://petapixel.com/"/>
+      <outline text="Photography Concentrate" title="Photography Concentrate" type="rss" xmlUrl="https://photographyconcentrate.com/feed/" htmlUrl="https://photographyconcentrate.com/"/>
+      <outline text="Photojojo" title="Photojojo" type="rss" xmlUrl="http://feeds.feedburner.com/Photojojo" htmlUrl="http://content.photojojo.com/"/>
+      <outline text="ShootTokyo" title="ShootTokyo" type="rss" xmlUrl="https://feeds.feedburner.com/shoottokyo" htmlUrl="https://shoottokyo.com/"/>
+      <outline text="Strobist" title="Strobist" type="rss" xmlUrl="https://feeds.feedburner.com/blogspot/WOBq" htmlUrl="https://strobist.blogspot.com/"/>
+      <outline text="Stuck in Customs" title="Stuck in Customs" type="rss" xmlUrl="https://www.stuckincustoms.com/feed/" htmlUrl="https://www.stuckincustoms.com/"/>
+      <outline text="The Big Picture" title="The Big Picture" type="rss" xmlUrl="http://feeds.boston.com/boston/bigpicture/index" htmlUrl="http://www.bostonglobe.com/bigpicture/"/>
+      <outline text="Views, Reviews &amp; Interviews For Photographers On Tiffinbox" title="Views, Reviews &amp; Interviews For Photographers On Tiffinbox" type="rss" xmlUrl="http://tiffinbox.org/feed/" htmlUrl="http://tiffinbox.org/"/>
+      <outline text="https://theimpossiblecool.tumblr.com/" title="https://theimpossiblecool.tumblr.com/" type="rss" xmlUrl="https://theimpossiblecool.tumblr.com/rss" htmlUrl="https://theimpossiblecool.tumblr.com/"/>
+    </outline>
+    <outline text="Science and Tech" title="Science and Tech">
+      <outline text="Science and technology" title="Science and technology" type="rss" xmlUrl="https://www.economist.com/science-and-technology/rss.xml" htmlUrl="https://www.economist.com/science-and-technology/"/>
+    </outline>
+    <outline text="Cinema" title="Cinema">
+      <outline text="Film | The Guardian" title="Film | The Guardian" type="rss" xmlUrl="https://www.theguardian.com/film/rss" htmlUrl="https://www.theguardian.com/uk/film"/>
+      <outline text="Culture: TV, Movies, Music, Art, and Theatre News and Reviews" title="Culture: TV, Movies, Music, Art, and Theatre News and Reviews" type="rss" xmlUrl="http://www.newyorker.com/online/blogs/movies/rss.xml" htmlUrl="http://www.newyorker.com/online/blogs/movies/"/>
+      <outline text="Film School Rejects" title="Film School Rejects" type="rss" xmlUrl="https://feeds.feedburner.com/FilmSchoolRejects" htmlUrl="https://filmschoolrejects.com/"/>
+      <outline text="Observations on film art" title="Observations on film art" type="rss" xmlUrl="https://www.davidbordwell.net/blog/feed/" htmlUrl="https://www.davidbordwell.net/blog"/>
+    </outline>
+    <outline text="Weather" title="Weather">
+      <outline text="2 Hour Forecast" title="2 Hour Forecast" type="rss" xmlUrl="http://www.weather.gov.sg/files/rss/rss2HrForecast.xml" htmlUrl="http://www.nea.gov.sg/"/>
+      <outline text="4 Day Forecast" title="4 Day Forecast" type="rss" xmlUrl="http://www.weather.gov.sg/files/rss/rss4day.xml" htmlUrl="http://www.nea.gov.sg/"/>
+      <outline text="24 Hour Forecast" title="24 Hour Forecast" type="rss" xmlUrl="http://www.weather.gov.sg/files/rss/rss24HrForecast.xml" htmlUrl="http://www.nea.gov.sg/"/>
+      <outline text="Heavy Rain Warning" title="Heavy Rain Warning" type="rss" xmlUrl="http://www.weather.gov.sg/files/rss/rssHeavyRain_new.xml" htmlUrl="http://app2.nea.gov.sg/advisory_heavyrain.aspx"/>
+      <outline text="NEA News" title="NEA News" type="rss" xmlUrl="https://www.nea.gov.sg/rss/news_update" htmlUrl="http://www.nea.gov.sg/"/>
+    </outline>
+  </body>
+</opml>
