@@ -37,9 +37,9 @@
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
 ;;
 (setq
- doom-font (font-spec :family "Fira Code Nerd" :size 18 :weight 'regular)
+ doom-font (font-spec :family "Fira Code" :size 18 :weight 'regular)
  doom-variable-pitch-font (font-spec :family "Fira Sans" :size 18 :weight 'regular)
- doom-symbol-font (font-spec :family "Symbola" :size 22 :weight 'Regular)
+ ;; doom-symbol-font (font-spec :family "Symbola" :size 22 :weight 'Regular)
  )
 
 ;; (defun my-custom-splash-message ()
@@ -116,6 +116,51 @@
                  plain (clock)
                  "+ Note @ %U \n Context \n %i %a"))
   )
+
+
+(defun my/org-html-collapsible-src-block (src-block contents info)
+  "Wrap source blocks in a collapsible HTML container."
+  (let ((lang (org-element-property :language src-block)))
+    (format "<div class=\"collapsible\">
+  <div class=\"collapsible-header\">Show/Hide %s Code</div>
+  <div class=\"collapsible-content\">
+%s
+  </div>
+</div>"
+            (capitalize (or lang "Source"))
+            (org-export-with-backend 'html src-block contents info))))
+
+(defun my/org-html-collapsible-quote-block (quote-block contents info)
+  "Wrap quote blocks in a collapsible HTML container."
+  (format "<div class=\"collapsible\">
+  <div class=\"collapsible-header\">Show/Hide Quote</div>
+  <div class=\"collapsible-content\">
+%s
+  </div>
+</div>"
+          (org-export-with-backend 'html quote-block contents info)))
+
+(with-eval-after-load 'ox-html
+  (org-export-define-derived-backend 'my-html 'html
+    :translate-alist '((src-block . my/org-html-collapsible-src-block)
+                       (quote-block . my/org-html-collapsible-quote-block))))
+
+;; (defun my/org-export-to-html (&optional async subtreep visible-only body-only ext-plist)
+;;   "Export current buffer to a collapsible HTML file."
+;;   (interactive)
+;;   (org-export-to-file 'my-html
+;;       (org-export-output-file-name ".html" subtreep)
+;;     async subtreep visible-only body-only ext-plist))
+
+(defun my/org-export-to-html (&optional async subtreep visible-only body-only ext-plist)
+  "Export current buffer to a collapsible HTML file and open it in the default web browser."
+  (interactive)
+  (let ((output-file (org-export-to-file 'my-html
+                         (org-export-output-file-name ".html" subtreep)
+                       async subtreep visible-only body-only ext-plist)))
+    (when output-file
+      (browse-url (concat "file://" (expand-file-name output-file))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;    ;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -265,23 +310,12 @@
              (set-default 'cursor-type 'box)
              (set-cursor-color "#F52503")))
 
-;; DOOM Modeline configs -- to prevet clipping of modeline on the right
-
-(after! doom-modeline
-  (doom-modeline-def-modeline 'main
-    '(bar matches buffer-info remote-host buffer-position parrot selection-info)
-    '(misc-info minor-modes check input-method buffer-encoding major-mode process vcs "  "))) ; <-- added padding here
-
-(setq
- doom-font (font-spec :family "Fira Code" :size 18 :weight 'regular)
- doom-variable-pitch-font (font-spec :family "Fira Sans" :size 18 :weight 'regular)
- )
-
-(setq doom-modeline-height 1) ; Set minimum height
+;; DOOM Modeline configs
+(setq doom-modeline-height 28) ; Set minimum height
 
 (custom-set-faces!
   '(mode-line :family "Fira Code" :height 0.9)
-  '(mode-line-inactive :family "Fira Code" :height 0.7))
+  '(mode-line-inactive :family "Fira Code" :height 0.8))
 
 ;;(add-hook! 'doom-modeline-mode-hook
 ;;  (let ((char-table char-width-table))
@@ -310,9 +344,21 @@
 
 (after! projectile
   (setq projectile-project-root-files-bottom-up
-        (remove ".git" projectile-project-root-files-bottom-up)))
+        (remove ".git" projectile-project-root-files-bottom-up))
+  (setq projectile-auto-discover nil)
+  )
 
-
-(setq modus-operandi-palette-overrides
-      '((fg-list-bullet fg-main)
-        (fg-list-numeric fg-main)))
+;; Modus themes gave me some issues, this allows me to set the bullet list faces correctly, based on light/dark
+(add-hook 'modus-themes-after-load-theme-hook
+          (lambda ()
+            (pcase modus-themes--current-theme
+              ('modus-operandi
+               (modus-themes-with-colors
+                 (custom-set-faces!
+                   `(org-list-dt :foreground ,blue-intense)
+                   `(org-list    :foreground ,blue-intense))))
+              ('modus-vivendi
+               (modus-themes-with-colors
+                 (custom-set-faces!
+                   `(org-list-dt :foreground ,cyan)
+                   `(org-list    :foreground ,cyan)))))))
