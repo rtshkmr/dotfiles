@@ -451,19 +451,16 @@ label.margin-toggle:not(.sidenote-number) {
 }
 
 /* my-collapsible.css */
-.collapsible {
-  border: 1px solid #ccc;
-  margin: 1em 0;
-  background: #f9f9f9;
-}
-.collapsible-header {
-  cursor: pointer;
-  padding: 8px;
-  background: #e0e0e0;
-  font-weight: bold;
-  user-select: none;
-}
-.collapsible-content {
-  display: none;
-  padding: 8px;
+@media (prefers-color-scheme: dark) {
+  .collapsible {
+    border: 1px solid #444;
+    background: #222;
+  }
+  .collapsible-header {
+    background: #333;
+    color: #eee;
+  }
+  .collapsible-content {
+    color: #ddd;
+  }
 }
