@@ -544,3 +544,14 @@ label.margin-toggle:not(.sidenote-number) {
     color: #b3b9c5;
   }
 }
+
+/* Make code blocks and inline code always match surrounding text size */
+code, pre, pre code, .collapsible-content code, .collapsible-content pre {
+  font-size: 1.05em !important;
+  line-height: 1.5 !important;
+}
+
+pre {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  border: 1px solid #e0e0e0;
+}
