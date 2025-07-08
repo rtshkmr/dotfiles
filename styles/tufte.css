@@ -475,6 +475,7 @@ label.margin-toggle:not(.sidenote-number) {
 }
 
 .collapsible-content {
+  display: none;
   padding: 1.2em;
   background: #f9fafb;
   color: #222;
