@@ -48,7 +48,6 @@ body {
     width: 87.5%;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 12.5%;
     font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
     background-color: #fffff8;
     color: #111;
@@ -450,17 +449,98 @@ label.margin-toggle:not(.sidenote-number) {
     }
 }
 
-/* my-collapsible.css */
+/* Light mode collapsible */
+.collapsible {
+  border: 1px solid #e0e0e0;
+  background: #f7f9fa;
+  border-radius: 8px;
+  margin-bottom: 1.5em;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+
+.collapsible-header {
+  background: linear-gradient(90deg, #f0f4f8 0%, #e9ecef 100%);
+  color: #2d3748;
+  font-weight: 600;
+  padding: 0.9em 1.2em;
+  cursor: pointer;
+  border-bottom: 1px solid #e0e0e0;
+  border-radius: 8px 8px 0 0;
+  transition: background 0.2s;
+}
+
+.collapsible-header:hover {
+  background: #e6eef7;
+}
+
+.collapsible-content {
+  padding: 1.2em;
+  background: #f9fafb;
+  color: #222;
+  border-radius: 0 0 8px 8px;
+  font-family: 'Fira Code', 'Fira Mono', 'Consolas', 'Menlo', monospace;
+  font-size: 1.04em;
+  overflow-x: auto;
+  transition: background 0.2s;
+}
+
+.collapsible-content code, .collapsible-content pre {
+  background: #f4f6fb;
+  color: #2d3748;
+  border-radius: 6px;
+  padding: 0.4em 0.7em;
+  font-size: 1em;
+  display: block;
+  line-height: 1.6;
+  margin: 0.5em 0;
+}
+
+.collapsible-content pre {
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  margin: 0.5em 0;
+}
+
+.collapsible-content pre::before {
+  content: "Code";
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #e0e7ef;
+  color: #6b7280;
+  font-size: 0.85em;
+  padding: 0.2em 0.7em;
+  border-radius: 6px 0 6px 0;
+  font-family: inherit;
+}
+
+/* Dark mode collapsible */
 @media (prefers-color-scheme: dark) {
   .collapsible {
-    border: 1px solid #444;
-    background: #222;
+    border: 1px solid #32343a;
+    background: #22232b;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
   }
   .collapsible-header {
-    background: #333;
-    color: #eee;
+    background: linear-gradient(90deg, #23263a 0%, #23272e 100%);
+    color: #f0f3fa;
+    border-bottom: 1px solid #32343a;
+  }
+  .collapsible-header:hover {
+    background: #2a2e3e;
   }
   .collapsible-content {
-    color: #ddd;
+    background: #181a20;
+    color: #e0e6f0;
+    font-family: 'Fira Code', 'Fira Mono', 'Consolas', 'Menlo', monospace;
+  }
+  .collapsible-content code, .collapsible-content pre {
+    background: #23263a;
+    color: #f0f3fa;
+    border-radius: 6px;
+  }
+  .collapsible-content pre::before {
+    background: #23263a;
+    color: #b3b9c5;
   }
 }
