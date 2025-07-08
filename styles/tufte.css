@@ -482,7 +482,10 @@ label.margin-toggle:not(.sidenote-number) {
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
-  .tag > span {
+    .tag {
+        background: none;
+    }
+    .tag > span {
     background: #25303b;
     color: #c2d3e0;
     border-color: #2f3b48;
