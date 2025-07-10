@@ -596,3 +596,10 @@ code, pre, pre code, .collapsible-content code, .collapsible-content pre {
   font-size: inherit !important;
   line-height: inherit;
 }
+
+
+/* centralise tables */
+table {
+  margin-left:auto;
+  margin-right:auto;
+}
