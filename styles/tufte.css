@@ -63,39 +63,181 @@ body {
     }
 }
 
+/* 1. Fluid Responsive Headings h1-h7 */
+h1, h2, h3, h4, h5, h6, h7 {
+    font-family: et-book, Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-top: 2.8rem;
+    margin-bottom: 1.2rem;
+}
 h1 {
-    font-weight: 400;
-    margin-top: 4rem;
-    margin-bottom: 1.5rem;
-    font-size: 3.2rem;
-    line-height: 1;
+    font-size: clamp(2.4rem, 1.8rem + 2.5vw, 3.8rem);
+    border-bottom: 2px solid rgba(0,0,0,0.1);
+    padding-bottom: 0.3rem;
 }
-
 h2 {
+    font-size: clamp(2.1rem, 1.6rem + 2vw, 3.0rem);
     font-style: italic;
-    font-weight: 400;
-    margin-top: 2.1rem;
-    margin-bottom: 1.4rem;
-    font-size: 2.2rem;
-    line-height: 1;
+    color: #444;
 }
-
 h3 {
+    font-size: clamp(1.9rem, 1.5rem + 1.8vw, 2.6rem);
+    font-style: italic;
+    color: #555;
+}
+h4 {
+    font-size: clamp(1.6rem, 1.3rem + 1.5vw, 2.2rem);
+    font-weight: 600;
+}
+h5 {
+    font-size: clamp(1.4rem, 1.2rem + 1.2vw, 1.9rem);
+    font-weight: 600;
+}
+h6 {
+    font-size: clamp(1.2rem, 1rem + 1vw, 1.6rem);
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: #666;
+}
+h7, .h7 {
+    display: block;
+    font-size: clamp(1rem, 0.9rem + 0.8vw, 1.3rem);
     font-style: italic;
     font-weight: 400;
-    font-size: 1.7rem;
-    margin-top: 2rem;
-    margin-bottom: 1.4rem;
-    line-height: 1;
+    color: #777;
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+}
+@media (prefers-color-scheme: dark) {
+    h1 { border-color: rgba(255,255,255,0.15); }
+    h2, h3 { color: #ccc; }
+    h4 { color: #ddd; }
+    h5 { color: #ccc; }
+    h6 { color: #bbb; }
+    h7, .h7 { color: #aaa; }
 }
 
-h4 {
-    font-style: normal;
-    font-weight: 600;
-    font-size: 1.6rem;
-    margin-top: 2rem;
-    margin-bottom: 1.4rem;
-    line-height: 1;
+/* 2. Prevent Squished Code Blocks Inside Any Heading: DISTINCT handling for block vs inline */
+/* Block code only for pre inside headings */
+h1 pre,
+h2 pre,
+h3 pre,
+h4 pre,
+h5 pre,
+h6 pre,
+h7 pre,
+.h7 pre {
+    width: 100%;
+    max-width: 90vw;
+    min-width: 300px;
+    box-sizing: border-box;
+    display: block;
+    margin: 1em 0;
+    overflow-x: auto;
+    background: #f9f9fa;
+    padding: 0.9em 1.2em;
+    border-radius: 6px;
+}
+@media (prefers-color-scheme: dark) {
+    h1 pre,
+    h2 pre,
+    h3 pre,
+    h4 pre,
+    h5 pre,
+    h6 pre,
+    h7 pre,
+    .h7 pre {
+        background: #23263a;
+    }
+}
+/* Inline code in headings is always inline, sized, subtly highlighted */
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code,
+h7 code,
+.h7 code {
+    display: inline;
+    padding: 0.1em 0.4em;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+@media (prefers-color-scheme: dark) {
+    h1 code,
+    h2 code,
+    h3 code,
+    h4 code,
+    h5 code,
+    h6 code,
+    h7 code,
+    .h7 code {
+        background: rgba(255, 255, 255, 0.08);
+    }
+}
+
+/* 3. Global code block improvements (all pre/code) */
+pre, pre > code {
+    width: 100%;
+    min-width: 280px;
+    max-width: 90vw;
+    box-sizing: border-box;
+    margin-left: 0;
+    margin-right: 0;
+    overflow-x: auto;
+}
+pre > code {
+    padding: 0.9em 1.2em;
+    display: block;
+    background: #f9f9fa;
+    border-radius: 6px;
+}
+@media (prefers-color-scheme: dark) {
+    pre > code {
+        background: #23263a;
+    }
+}
+
+/* 4. Fluid Body and List Text Sizing */
+body, p, dl, ol, ul, blockquote {
+    font-size: clamp(1.1rem, 1rem + 0.6vw, 1.4rem);
+    line-height: 2rem;
+}
+
+/* Keep readable measure for large screens, full width on mobile */
+section > p,
+section > footer,
+section > table,
+section > dl,
+section > ol,
+section > ul,
+figure,
+blockquote p,
+blockquote footer {
+    width: 100%;
+    max-width: 55ch;
+}
+@media (max-width: 760px) {
+    section > p,
+    section > footer,
+    section > table,
+    section > dl,
+    section > ol,
+    section > ul,
+    figure,
+    blockquote p,
+    blockquote footer {
+        max-width: 98vw;
+    }
+}
+
+/* 5. Deep Lists Padding */
+ul ul, ol ol, ul ol, ol ul {
+    padding-left: 2em;
 }
 
 hr {
@@ -134,14 +276,6 @@ section {
     padding-bottom: 1rem;
 }
 
-p,
-dl,
-ol,
-ul {
-    font-size: 1.4rem;
-    line-height: 2rem;
-}
-
 p {
     margin-top: 1.4rem;
     margin-bottom: 1.4rem;
@@ -158,16 +292,13 @@ div.epigraph > blockquote {
     margin-top: 3em;
     margin-bottom: 3em;
 }
-
 div.epigraph > blockquote,
 div.epigraph > blockquote > p {
     font-style: italic;
 }
-
 div.epigraph > blockquote > footer {
     font-style: normal;
 }
-
 div.epigraph > blockquote > footer > cite {
     font-style: italic;
 }
@@ -181,20 +312,16 @@ blockquote p {
     width: 55%;
     margin-right: 40px;
 }
-
 blockquote footer {
     width: 55%;
     font-size: 1.1rem;
     text-align: right;
 }
-
 section > p,
 section > footer,
 section > table {
     width: 55%;
 }
-
-/* 50 + 5 == 55, to be the same width as paragraph */
 section > dl,
 section > ol,
 section > ul {
@@ -218,7 +345,6 @@ figure {
     -webkit-margin-end: 0;
     margin: 0 0 3em 0;
 }
-
 figcaption {
     float: right;
     clear: right;
@@ -336,7 +462,6 @@ pre > code {
     overflow-x: auto;
     display: block;
 }
-
 pre.fullwidth > code {
     width: 90%;
 }
@@ -357,7 +482,7 @@ input.margin-toggle {
 
 label.sidenote-number {
     display: inline-block;
-    max-height: 2rem; /* should be less than or equal to paragraph line-height */
+    max-height: 2rem;
 }
 
 label.margin-toggle:not(.sidenote-number) {
@@ -366,11 +491,10 @@ label.margin-toggle:not(.sidenote-number) {
 
 .iframe-wrapper {
     position: relative;
-    padding-bottom: 56.25%; /* 16:9 */
+    padding-bottom: 56.25%;
     padding-top: 25px;
     height: 0;
 }
-
 .iframe-wrapper iframe {
     position: absolute;
     top: 0;
@@ -385,53 +509,43 @@ label.margin-toggle:not(.sidenote-number) {
         padding-left: 8%;
         padding-right: 8%;
     }
-
     hr,
     section > p,
     section > footer,
     section > table {
         width: 100%;
     }
-
     pre > code {
         width: 97%;
     }
-
     section > dl,
     section > ol,
     section > ul {
         width: 90%;
     }
-
     figure {
         max-width: 90%;
     }
-
     figcaption,
     figure.fullwidth figcaption {
         margin-right: 0%;
         max-width: none;
     }
-
     blockquote {
         margin-left: 1.5em;
         margin-right: 0em;
     }
-
     blockquote p,
     blockquote footer {
         width: 100%;
     }
-
     label.margin-toggle:not(.sidenote-number) {
         display: inline;
     }
-
     .sidenote,
     .marginnote {
         display: none;
     }
-
     .margin-toggle:checked + .sidenote,
     .margin-toggle:checked + .marginnote {
         display: block;
@@ -443,34 +557,28 @@ label.margin-toggle:not(.sidenote-number) {
         vertical-align: baseline;
         position: relative;
     }
-
     label {
         cursor: pointer;
     }
-
     div.table-wrapper,
     table {
         width: 85%;
     }
-
     img {
         width: 100%;
     }
 }
 
-
-
 /* Tag container: no background, minimal spacing */
 .tag {
   display: inline-flex;
-  gap: 0.2em;        /* Small gap between tags */
+  gap: 0.2em;
   align-items: center;
-  padding: 0;        /* Remove extra padding */
+  padding: 0;
   margin: 0;
   background: none;
   border: none;
 }
-
 /* All tags: compact, pill-shaped, modern */
 .tag > span {
   display: inline-block;
@@ -483,12 +591,11 @@ label.margin-toggle:not(.sidenote-number) {
   color: #28516a;
   border: 1px solid #e0e6ef;
   line-height: 1.5;
-  margin: 0;         /* Remove default margin */
+  margin: 0;
   vertical-align: middle;
   box-sizing: border-box;
   transition: background 0.2s, color 0.2s, border 0.2s;
 }
-
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
     .tag {
@@ -500,9 +607,6 @@ label.margin-toggle:not(.sidenote-number) {
     border-color: #2f3b48;
   }
 }
-
-
-
 /* Light mode collapsible */
 .collapsible {
   border: 1px solid #e0e0e0;
@@ -511,7 +615,6 @@ label.margin-toggle:not(.sidenote-number) {
   margin-bottom: 1.5em;
   box-shadow: 0 1px 4px rgba(0,0,0,0.03);
 }
-
 .collapsible-header {
   background: linear-gradient(90deg, #f0f4f8 0%, #e9ecef 100%);
   color: #2d3748;
@@ -522,11 +625,9 @@ label.margin-toggle:not(.sidenote-number) {
   border-radius: 8px 8px 0 0;
   transition: background 0.2s;
 }
-
 .collapsible-header:hover {
   background: #e6eef7;
 }
-
 .collapsible-content {
   display: none;
   padding: 1.2em;
@@ -538,7 +639,6 @@ label.margin-toggle:not(.sidenote-number) {
   overflow-x: auto;
   transition: background 0.2s;
 }
-
 .collapsible-content code, .collapsible-content pre {
   background: #f4f6fb;
   color: #2d3748;
@@ -549,13 +649,11 @@ label.margin-toggle:not(.sidenote-number) {
   line-height: 1.6;
   margin: 0.5em 0;
 }
-
 .collapsible-content pre {
   position: relative;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
   margin: 0.5em 0;
 }
-
 .collapsible-content pre::before {
   content: "Code";
   position: absolute;
@@ -568,7 +666,6 @@ label.margin-toggle:not(.sidenote-number) {
   border-radius: 6px 0 6px 0;
   font-family: inherit;
 }
-
 /* Dark mode collapsible */
 @media (prefers-color-scheme: dark) {
   .collapsible {
@@ -599,16 +696,17 @@ label.margin-toggle:not(.sidenote-number) {
     color: #b3b9c5;
   }
 }
-
 /* Make code blocks and inline code always match surrounding text size */
 code, pre, pre code, .collapsible-content code, .collapsible-content pre {
   font-size: inherit !important;
   line-height: inherit;
 }
-
-
 /* centralise tables */
 table {
   margin-left:auto;
   margin-right:auto;
+}
+
+html {
+  scroll-behavior:  smooth;
 }
