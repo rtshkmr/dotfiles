@@ -710,3 +710,36 @@ table {
 html {
   scroll-behavior:  smooth;
 }
+
+
+a.anchor {
+  text-decoration: none;
+  margin-left: 0.3em;   /* spacing from header text */
+  font-size: 0.85em;
+  color: #666;          /* subtle color */
+  padding: 0.2em;       /* increase click/tap area */
+}
+
+@media (hover: hover) {
+  a.anchor {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+  h1:hover a.anchor,
+  h2:hover a.anchor,
+  h3:hover a.anchor,
+  h4:hover a.anchor,
+  h5:hover a.anchor,
+  h6:hover a.anchor,
+  h7:hover a.anchor,
+  h8:hover a.anchor {
+    opacity: 1;
+  }
+}
+
+/* Always visible on touch screens */
+@media (hover: none) {
+  a.anchor {
+    opacity: 1;
+  }
+}
