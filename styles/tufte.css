@@ -743,3 +743,35 @@ a.anchor {
     opacity: 1;
   }
 }
+
+/* Assign level variables for indent guide positioning */
+h1 { --level: 1; margin-left: 0; }
+h2 { --level: 2; margin-left: clamp(0.5em, 1vw, 1em); }
+h3 { --level: 3; margin-left: clamp(1em, 2vw, 1.5em); }
+h4 { --level: 4; margin-left: clamp(1.5em, 3vw, 2em); }
+h5 { --level: 5; margin-left: clamp(2em, 4vw, 2.5em); }
+h6 { --level: 6; margin-left: clamp(2.5em, 5vw, 3em); }
+h7, .h7 { --level: 7; margin-left: clamp(3em, 6vw, 3.5em); }
+h8, .h8 { --level: 8; margin-left: clamp(3.5em, 7vw, 4em); }
+h9, .h9 { --level: 9; margin-left: clamp(4em, 8vw, 4.5em); }
+h10, .h10 { --level: 10; margin-left: clamp(4.5em, 9vw, 5em); }
+
+/* Optional indent guides for h2+ */
+h2::before, h3::before, h4::before, h5::before,
+h6::before, h7::before, h8::before, h9::before, h10::before {
+  content: "";
+  position: absolute;
+  left: 0.25em;
+  height: 1em;
+  width: 2px;
+  background: rgba(0,0,0,0.08);
+  transform: translateX(calc((var(--level) - 1) * 0.8em));
+}
+
+/* Dark mode adjust for indent guides */
+@media (prefers-color-scheme: dark) {
+  h2::before, h3::before, h4::before, h5::before,
+  h6::before, h7::before, h8::before, h9::before, h10::before {
+    background: rgba(255,255,255,0.12);
+  }
+}
