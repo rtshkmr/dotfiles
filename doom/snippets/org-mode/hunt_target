@@ -1,0 +1,66 @@
+# -*- mode: snippet -*-
+# name: Job Opening Interesting
+# uuid:
+# key: hunt_target
+# condition: t
+# --
+
+** [s/n] [Company Name] - [Position Title]
+:PROPERTIES:
+:Applied: [YYYY-MM-DD]
+:Status: [Interested / Applied / Interviewing / Offer / Rejected]
+:Contact: [HR/recruiter name, if available]
+:Deadline: [YYYY-MM-DD, if any]
+:END:
+- Job Posting: [[https://link-to-role.example](https://link-to-role.example)[Direct Link]]
+- Location: [Remote/Onsite/Hybrid, City]
+- Sourced from: [Referral, LinkedIn, etc.]
+- Resume/Cover Letter Version: [e.g., v2, annotated with job-specific tweaks]
+*** Role Summary and Personal Alignment
+- Short description of role and why it interests me.
+*** Schedule
+**** Application Outcomes & Feedback
+- Interview stages, dates (sync with org-agenda):
+  - [YYYY-MM-DD HH:MM] Phone Screen
+  - [YYYY-MM-DD HH:MM] Technical/Case Interview
+- Feedback from company, network, or external reviewers.
+- Reflections: what went well, what to iterate for next time.
+
+**** Next Steps
+- Immediate actions, follow-ups, agenda items.
+
+*** Strategic Context & Scorecard
+- Team size/makeup, mission, recent projects.
+- Unique or risky aspects of the business/unit.
+- Balanced scorecard (rate 1-5):
+  | Dimension                        | Description                                                                                          | Rating (1-5) |
+  |----------------------------------+------------------------------------------------------------------------------------------------------+--------------|
+  | Agency & Autonomy                | Freedom to innovate, lead product/tech decisions, and influence strategy across teams or org levels. |              |
+  | Technical Challenge & Innovation | Role involves emerging technologies, complex problem-solving, and technical creativity.              |              |
+  | Impact & Customer Focus          | Role directly impacting users, customers, or business KPIs; involvement in data/business insights.   |              |
+  | Leadership & Team Influence      | Opportunity to lead, mentor, and shape team culture, structure, and execution.                       |              |
+  | Cross-Functional Scope           | Involves product, engineering, business interface, and potentially startup scaling dynamics.         |              |
+  |                                  | Total rewards including salary, equity, and growth opportunity aligned with your expectations.       |              |
+  | Company Health & Viability       | Firm financial stability, runway, growth trajectory, and strategic positioning.                      |              |
+  |                                  | Early, seed, or growth-stage startups versus large enterprises; agility preferred.                   |              |
+
+*** Initial DD
+**** Relevant, Recent Public Communications
+- Recent news, blogs, events, or notable public statements.
+- Social presence, visibility, external perception.
+**** Business & Company Health
+- Revenue, growth, funding rounds, layoffs, other business news.
+- Evidence: cite sources.
+*** Application Personalisation
+- Key resume/project highlights for this role.
+- STAR examples aligned to the job.
+- Top three things to emphasize in application.
+- Resume keywords used for ATS optimization.
+
+*** Networking & Referral Tracking
+- Contacts at company, networking efforts, date of outreach/convo.
+- Referral source, info session notes.
+*** Red Flags / Open Questions
+- Concerns or clarifying questions about the team/company.
+- Information to block or prioritize further action.
+*** Adversarial Simulation Prompt
