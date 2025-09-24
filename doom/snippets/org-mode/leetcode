@@ -1,0 +1,54 @@
+# -*- mode: snippet -*-
+# name: leetcode
+# uuid:
+# key: leetcode
+# condition: t
+# --
+
+*** []
+:collapsible:
+Paste the question extract here just for reference.
+:END:
+**** Constraints and Edge Cases
+
+    <list constraints, input limits, or tricky edge cases here>
+
+**** My Solution (Code)
+#+begin_src python -n
+#+end_src
+
+**** My Approach/Explanation
+
+    <briefly explain your reasoning, algorithm, and why you chose it>
+
+**** My Learnings/Questions
+
+    <what did you learn? any uncertainties or questions?>
+
+**** Prompt for GPT Evaluation
+#+begin_quote
+Please do the following:
+
+1. Evaluate the correctness of my solution. Are there any logical or edge case errors?
+
+2. Analyze the time and space complexity of my code.
+
+3. Suggest improvements in code style, efficiency, or clarity.
+
+4. Compare my approach to the optimal solution (if different).
+
+5. Provide a sample optimal solution (if mine is not optimal).
+
+6. Point out any Pythonic (or language-specific) improvements.
+
+7. Are there any completely different approaches to this problem?
+   - e.g something that uses a completely different data structure
+
+   If so, then help me gain the intuition for it and show the code clearly
+
+8. Answer my specific questions (if any are listed above).
+#+end_quote
+
+**** [Optional] Additional Context
+
+    <e.g., "I struggled with X", "I want to know about alternative algorithms", etc.>

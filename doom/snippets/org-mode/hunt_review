@@ -1,0 +1,23 @@
+# -*- mode: snippet -*-
+# name: Job Hunt Weekly Review
+# uuid:
+# key: hunt_review
+# condition: t
+# --
+
+** [YYYY-MM-DD — YYYY-MM-DD]
+- SMART Goals:
+  - Applications to send: [ ]
+  - Networking actions: [ ]
+  - Skill-building/reflective reviews: [ ]
+- Barriers/Adjustments:
+  - [Describe blockers, unexpected workload, etc.]
+  - [Solutions, pivots, or tools to try next week]
+- Learnings/Iterations:
+  - [Key insights from the week: what worked, what didn’t?]
+  - [Adjusted strategies, new experiment ideas]
+- Wins & Highlights:
+  - [Notable accomplishments, breakthroughs, positive feedback]
+- Next Iteration Areas:
+  - [What to focus/improve on next week]
+  - [Any process/goal or mindset shifts for greater success]

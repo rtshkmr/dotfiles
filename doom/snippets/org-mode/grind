@@ -1,0 +1,352 @@
+# -*- mode: snippet -*-
+# name: Leetcode Specific Question Tracking
+# uuid:
+# key: grind
+# condition: t
+# --
+
+
+*** Problem X
+:collapsible:
+Paste the question extract here just for reference.
+:END:
+**** Constraints and Edge Cases
+
+    <list constraints, input limits, or tricky edge cases here>
+
+**** My Solution (Code)
+#+begin_src python -n
+#+end_src
+
+**** My Approach/Explanation
+
+    <briefly explain your reasoning, algorithm, and why you chose it>
+
+**** My Learnings/Questions
+
+    <what did you learn? any uncertainties or questions?>
+
+**** Prompt for GPT Evaluation
+#+begin_quote
+Please do the following:
+
+1. Evaluate the correctness of my solution. Are there any logical or edge case errors?
+
+2. Analyze the time and space complexity of my code.
+
+3. Suggest improvements in code style, efficiency, or clarity.
+
+4. Compare my approach to the optimal solution (if different).
+
+5. Provide a sample optimal solution (if mine is not optimal).
+
+6. Point out any Pythonic (or language-specific) improvements.
+
+7. Are there any completely different approaches to this problem?
+   - e.g something that uses a completely different data structure
+
+   If so, then help me gain the intuition for it and show the code clearly
+
+8. Answer my specific questions (if any are listed above).
+    #+end_quote
+
+**** Prompt for GPT Evaluation (with Greedy)
+#+begin_quote
+Please do the following:
+
+1. Evaluate the correctness of my solution. Are there any logical or edge case errors?
+
+2. Analyze the time and space complexity of my code.
+
+3. Suggest improvements in code style, efficiency, or clarity.
+
+4. Compare my approach to the optimal solution (if different).
+
+5. Provide a sample optimal solution (if mine is not optimal).
+
+6. Point out any Pythonic (or language-specific) improvements.
+
+7. Are there any completely different approaches to this problem?
+   - e.g something that uses a completely different data structure
+
+   If so, then help me gain the intuition for it and show the code clearly
+
+8. Answer my specific questions (if any are listed above).
+
+ALso help me evaluate this in the context of greedy algorithms, ensuring that a good framework of presenting this problem into a greedy algo is given / understood.
+#+end_quote
+
+**** Prompt for GPT Evaluation (with DP)
+#+begin_quote
+Please do the following:
+
+1. Evaluate the correctness of my solution. Are there any logical or edge case errors?
+
+2. Analyze the time and space complexity of my code.
+
+3. Suggest improvements in code style, efficiency, or clarity.
+
+4. Compare my approach to the optimal solution (if different).
+
+5. Provide a sample optimal solution (if mine is not optimal).
+
+6. Point out any Pythonic (or language-specific) improvements.
+
+7. Are there any completely different approaches to this problem?
+   - e.g something that uses a completely different data structure
+
+   If so, then help me gain the intuition for it and show the code clearly
+
+8. Answer my specific questions (if any are listed above).
+
+ALso help me evaluate this in the context of greedy algorithms, ensuring that a good framework of presenting this problem into a greedy algo is given / understood.
+
+Additionally, use my notes for Dynamic Programming and use the recipes that are here.
+
+Recipe to define a solution via DP
+1. [Generate Naive Recursive Algo]
+
+   Characterise the structure of an optimal solution
+   $\implies$ what are the subproblems?
+   $\implies$ are they independent subproblems?
+   $\implies$ how many subproblems will there be?
+
+2. Recursively define the value of an optimal solution
+   $\implies$ does this have the overlapping sub-problems property?
+   $\implies$ what's the cost of making a choice?
+   $\implies$ how many ways can I make that choice?
+3. Compute value of an optimal solution
+4. Construct optimal solution from computed information
+ Defining things
+1. Optimal Substructure:
+A problem exhibits "optimal substructure" if an optimal solution to the problem contains within it optimal solutions to subproblems.
+
+ Elements of Dynamic Programming: Key Indicators of Applicability
+ [1] Optimal Sub-Structure
+ Defining "Optimal Substructure"
+/A problem exhibits optimal substructure if an optimal solution to the problem *contains within it optimal solutions to sub-problems*./
+
++ typically a signal that _DP (or Greedy Approaches)_ will apply here.
++ this is something to discover about the problem domain
+ Common Pattern when Discovering Optimal Substructure
++ solution involves making a choice e.g. choosing an initial cut in the rod or choosing what k should be for splitting the matrix chain up
+
+  $\implies$ making the choice also determines the number of sub-problems that the problem is reduced to
+
++ Assume that the optimal choice can be determined, ignore how first.
+
++ Given the optimal choice, determine what the sub-problems looks like $\implies$ i.e. characterise the space of the subproblems
+  a) keep the space as simple as possible then expand
+
+  b) typically the substructures vary across problem domains in 2 ways:
+
+     1) [number of subproblems]
+
+        how many sub-problems does an optimal solution to the original problem use?
+        - rod cutting:
+          =# of subproblems = 1= (of size n-i) where i is the chosen first cut length
+
+        - matrix split:
+
+          =# of subproblems = 2= (left split and right split)
+
+     2) [number of subproblem choices]
+
+        how many choices are there when determining which subproblems(s) to use in an optimal solution. i.e. now that we know what to choose, how many ways are there to make that choice?
+
+        - rod cutting: # of choices for i = length of first cut, =n= choices
+
+        - matrix split: # of choices for where to split (idx k) = =j - i=
+
+     Naturally, this is how we analyse the runtime: =# of subproblems * # of choices @ each sub-problem=
+
+  c) Reason to yourself if and how solving the subproblems that are used in an optimal solution means that the subproblem-solutions are also optimal. This is typically done via the =cut-and-paste argument=.
+
+Caveat: Subproblems must be =independent=
++ "independent subproblems"
+
+  - solution to one subproblem doesn't affect the solution to another subproblem for the same problem
+
++ example: *Unweighted Shortest Path* (independent subproblems) vs *Unweighted Longest Simple Path* (dependent subproblems)
+
+    Consider graph $G = (V,E)$ with vertices $u,v \notin V$
+
+  * _Unweighted shortest path_: we want to find path $u\overset{p}{\leadsto}v$ then we can break it down into subpaths $u\overset{p1}{\leadsto}w\overset{p2}{\leadsto}v$ (optimal substructure). If path, p, is optimal from $u\leadsto{v}$ then p1 must be shortest path from $u\leadsto{w}$ and likewise p2 must be shortest path from $w\leadsto{v}$ (cut-and-paste argument)
+    Here, we know that the subproblems are independent.
+
+  * Unweighted Longest Simple Path: the subproblems can have paths that overlap (not subproblem overlap), hence it's not independent because _the vertices that appear can appear in the solution to the second subproblem_
+
+Terminology: Optimal substruture vs optimal solution
+*optimal substructure* is a property that enables efficient computation of the optimal value, while the solution is the specific configuration that yields that optimal value
+
+You're right that in dynamic programming algorithms for optimization problems, the goal is usually to find **an** optimal solution rather than **the** unique optimal solution. Here's how the optimal substructure and the actual solution differ:
+
+### Optimal Substructure
+
+The optimal substructure refers to the property that the optimal solution to a problem can be constructed from the optimal solutions to its subproblems. This means that if we know the optimal solutions to the subproblems, we can efficiently determine the optimal solution to the overall problem.
+
+For example, in the rod cutting problem, if we know the maximum revenue for rods of length 1 to n-1, we can efficiently determine the maximum revenue for a rod of length n by considering cutting the rod at each possible length and taking the maximum revenue.
+
+### The Solution
+
+The actual solution, on the other hand, refers to the specific configuration or set of choices that yields the optimal value. In the rod cutting problem, the solution would be the specific way to cut the rod that results in the maximum revenue.
+
+The key difference is that the optimal substructure allows us to efficiently compute the optimal value, but it doesn't necessarily specify the exact solution. There may be multiple solutions that yield the same optimal value.
+
+For example, in the rod cutting problem, there may be multiple ways to cut the rod that result in the same maximum revenue. The optimal substructure allows us to efficiently compute the maximum revenue, but it doesn't specify which particular cutting configuration to choose.
+
+So in summary, the optimal substructure is a property that enables efficient computation of the optimal value, while the solution is the specific configuration that yields that optimal value. Dynamic programming algorithms leverage the optimal substructure to efficiently compute the optimal value, but the actual solution may not be uniquely determined.
+
+Citations:
+[1] https://library.fiveable.me/key-terms/programming-for-mathematical-applications/optimal-substructure
+[2] https://afteracademy.com/blog/optimal-substructure-and-overlapping-subproblems/
+[3] https://www.geeksforgeeks.org/optimal-substructure-property-in-dynamic-programming-dp-2/
+[4] https://labuladong.gitbook.io/algo-en/i.-dynamic-programming/optimalsubstructure
+[5] https://stackoverflow.com/questions/33563230/optimal-substructure-in-dynamic-programing
+[6] https://en.wikipedia.org/wiki/Optimal_substructure
+[7] https://www.cs.cmu.edu/~15451-f22/lectures/lec09-dp1.pdf
+[8] https://www.javatpoint.com/optimal-substructure-property
+
+[2] Overlapping Sub-Problems
++ DP should be disambiguated from Divide & Conquer:
+  - for Divide&Conquer, choosing a division point generates brand new problems that likely don't overlap
+  - for DP, the space of sub-problems is small and hence if done purely recursively, the same operations get computed multiple times
+
+[Practical point] Reconstructing an optimal solution
+Since one way to look at DP is table-filling, we typically have:
+1) table of costs
+2) table of optimal choices
+
+the table of optimal choices can be built from the table of costs, but we want to avoid recalculating the optimal choices
+
+Memoisation as an alternative
+- the textbook used sees this as an alternative and memoised tables as the aux DS for recursive, top-down approaches
+- memoisation also exploits the observation that the space of the subproblems is small and hence overlapping
+
+Common Misconceptions
+Here are some common misconception, based on what perplexity says
+
+Based on the search results, here are some of the common misconceptions that learners have about dynamic programming:
+
+## 1. Misconceptions about the Definition and Purpose of Dynamic Programming
+
+- Thinking that recursion and dynamic programming are explicitly different concepts[3].
+- Believing that dynamic programming is exclusively used to solve optimization problems[3].
+
+## 2. Misconceptions about the Optimal Substructure Property
+
+- Assuming that the optimal solution to a problem can be constructed from any combination of optimal solutions to its subproblems, rather than specific optimal solutions to the right subproblems[1][2].
+- Thinking that the optimal solution to a problem can be constructed from optimal solutions to unrelated subproblems[4].
+
+## 3. Misconceptions about Memoization and Tabulation
+
+- Failing to recognize that memoization (top-down) and tabulation (bottom-up) are two different implementation strategies for dynamic programming[1][2].
+- Believing that memoization always involves recursion and tabulation always involves iteration[1][2].
+
+## 4. Misconceptions about the Filling Order of the DP Table
+
+- Assuming that the DP table must always be filled in a specific order (e.g., always from small to big cases), without understanding that the order depends on the problem's dependencies and constraints[1][2][4].
+
+## 5. Misconceptions about the Relationship between Subproblems
+
+- Thinking that the solutions to all subproblems are needed to solve the original problem, rather than understanding that only specific optimal solutions to the right subproblems are needed[1][2].
+
+## 6. Misconceptions about the Efficiency of Dynamic Programming
+
+- Believing that dynamic programming always leads to polynomial-time algorithms, without understanding that it can sometimes only slightly improve the exponential-time complexity[4].
+
+Understanding and addressing these common misconceptions can help learners develop a more accurate and comprehensive understanding of dynamic programming and its applications.
+
+Citations:
+[1] https://dl.acm.org/doi/10.1145/3159450.3159528
+[2] https://dl.acm.org/doi/abs/10.1145/3159450.3159528
+[3] https://ics.uci.edu/~mikes/papers/Student_Misconceptions_Dynamic_Programming.pdf
+[4] https://www.cs.cmu.edu/~15451-f22/lectures/lec09-dp1.pdf
+[5] https://www.reddit.com/r/compsci/comments/er05hn/help_me_wrap_my_head_around_dynamic_programming/
+[6] https://yourbasic.org/algorithms/dynamic-programming-explained/
+[7] https://stackoverflow.com/questions/33563230/optimal-substructure-in-dynamic-programing
+[8] https://lec.inf.ethz.ch/DA/2020/slides/daLecture13.en.pdf
+
+Greedy Algos vs DP
+When comparing **greedy strategies** and **dynamic programming (DP)**, it's essential to understand how they differ in methodology, application, and the nature of the problems they solve. Both approaches involve identifying optimal substructures, but they apply this concept in distinct ways. Here’s a detailed disambiguation based on the search results:
+
+### 1. **Definition and Approach**
+
+- **Greedy Strategy**:
+  - A greedy algorithm makes the most optimal choice at each step with the hope that these local optimum choices will lead to a global optimum solution. It does not consider the overall impact of the current choice on future decisions.
+  - Greedy algorithms are typically simpler and faster to implement, as they do not require storing results of subproblems. However, they do not guarantee an optimal solution for all problems.
+
+- **Dynamic Programming**:
+  - Dynamic programming is a technique used to solve complex problems by breaking them down into simpler subproblems. It is based on the principles of optimal substructure and overlapping subproblems.
+  - DP guarantees an optimal solution by considering all possible cases and storing the results of subproblems to avoid redundant computations. This can lead to higher time and space complexity compared to greedy algorithms.
+
+### 2. **Optimal Substructure**
+
+- **Greedy Algorithms**:
+  - Greedy algorithms rely on the greedy choice property, which means that a locally optimal choice leads to a globally optimal solution. However, this property does not hold for all problems, which is why greedy algorithms may fail to find the optimal solution in some cases.
+
+- **Dynamic Programming**:
+  - Dynamic programming explicitly uses the optimal substructure property, where an optimal solution to a problem can be constructed from optimal solutions of its subproblems. DP ensures that all relevant subproblems are considered, leading to a guaranteed optimal solution.
+
+### 3. **Subproblem Reuse**
+
+- **Greedy Strategy**:
+  - Greedy algorithms typically do not reuse solutions to subproblems. Each decision is made independently based on the current state without revisiting previous choices.
+
+- **Dynamic Programming**:
+  - DP explicitly solves and caches solutions to overlapping subproblems. This reuse of subproblem solutions is a key feature of dynamic programming, allowing for efficient computation.
+
+### 4. **Complexity and Efficiency**
+
+- **Greedy Algorithms**:
+  - Greedy algorithms are generally more efficient in terms of time complexity due to their straightforward approach. They often run in linear or logarithmic time, depending on the problem.
+  - They are suitable for problems where local optimization leads to global optimization, such as in minimum spanning trees or certain shortest path problems.
+
+- **Dynamic Programming**:
+  - DP can be less efficient than greedy algorithms in terms of time complexity, especially if every possible solution is computed. However, proper use of memoization can mitigate this.
+  - DP is applicable to problems with overlapping subproblems and optimal substructure, such as the Fibonacci sequence, longest common subsequence, or knapsack problems.
+
+### 5. **Examples**
+
+- **Greedy Algorithms**:
+  - Common examples include:
+    - **Fractional Knapsack Problem**: Where you can take fractions of items.
+    - **Minimum Spanning Tree**: Algorithms like Prim's and Kruskal's.
+    - **Huffman Coding**: For optimal prefix codes.
+
+- **Dynamic Programming**:
+  - Common examples include:
+    - **0/1 Knapsack Problem**: Where you cannot take fractions of items.
+    - **Longest Common Subsequence**: Finding the longest subsequence present in both sequences.
+    - **Matrix Chain Multiplication**: Finding the most efficient way to multiply a given sequence of matrices.
+
+### Conclusion
+
+In summary, while both greedy strategies and dynamic programming involve the concept of optimal substructure, they differ significantly in their approach to problem-solving. Greedy algorithms make decisions based on local optimality without revisiting previous choices, whereas dynamic programming systematically considers all possible subproblems and their solutions to ensure a globally optimal result. Understanding these differences allows for better problem-solving strategies and the appropriate application of each method based on the problem's characteristics.
+
+Citations:
+[1] https://www.boardinfinity.com/blog/greedy-vs-dp/
+[2] https://www.shiksha.com/online-courses/articles/difference-between-greedy-and-dynamic-programming-blogId-158053
+[3] https://www.interviewbit.com/blog/difference-between-greedy-and-dynamic-programming/
+[4] https://stackoverflow.com/questions/16690249/what-is-the-difference-between-dynamic-programming-and-greedy-approach
+[5] https://www.geeksforgeeks.org/greedy-approach-vs-dynamic-programming/
+[6] https://byjus.com/gate/difference-between-greedy-approach-and-dynamic-programming/
+[7] https://www.cs.cmu.edu/~15451-f22/lectures/lec09-dp1.pdf
+[8] https://ics.uci.edu/~mikes/papers/Student_Misconceptions_Dynamic_Programming.pdf
+
+General Takeaways
+Bottom-up vs Top-Down
+- we can use a *subproblem graph* to show the relationship with the subproblems ==> diff b/w bottom up and top-down is how these deps are handled (recursive-called or soundly iterated with a proper direction)
+- aysymptotic runtime is pretty similar since both solve similar $\Omega(n^{2})$
+- Bottom up:
+  * basically considers order at which the subproblems are solved
+  * because of the ordered way of solving the smaller sub-problems first, there's no need for recursive calls and code can be iterative entirely
+    + so no overhead from function calls
+    + no chance of stack overflow
+    + benefits from data-locality
+  * a way to see the vertices of the subproblem graph such that the subproblems y-adjacent to a given subproblem x is solved before subproblem x is solved
+
+#+end_quote
+**** [Optional] Additional Context
+
+    <e.g., "I struggled with X", "I want to know about alternative algorithms", etc.>
