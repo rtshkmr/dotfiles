@@ -3,44 +3,55 @@
 This is a quick and dirty way to organise my dotfiles.
 
 ** Current Doom Info
-#+begin_src bash
-generated  Aug 30, 2024 10:49:06
-system     MacOS 14.6.1 Darwin 23.6.0 arm64
-emacs      29.1 EMACSDIR=~/.config/emacs/
-	   EMACS=/opt/homebrew/Cellar/emacs-mac/emacs-29.1-mac-10.0/Emacs.app/Contents/MacOS/Emacs
-doom       3.0.0-pre PROFILE=_@0 grafted, HEAD -> master, origin/master,
-	   origin/HEAD 9620bb4 2024-04-18 14:20:48 -0400 ~/.config/doom/
+
+here's my infodump:
+#+begin_quote
+generated  Sep 24, 2025 15:21:04
+system     MacOS 26.0 Darwin 25.0.0 arm64 ns
+emacs      30.2 EMACSDIR=~/.config/emacs/
+           EMACS=/opt/homebrew/Cellar/emacs-plus@30/30.2/Emacs.app/Contents/MacOS/Emacs
+doom       3.0.0-pre PROFILE=_default@0 HEAD -> master 7e711d53c 2025-09-22 23:30:03
+           -0400 ~/.config/doom/
 shell      /bin/zsh
-features   ACL DBUS GLIB GMP GNUTLS JSON LCMS2 LIBXML2 MODULES
-	   NATIVE_COMP NOTIFY KQUEUE PDUMPER RSVG SQLITE3 THREADS
-	   TOOLKIT_SCROLL_BARS TREE_SITTER WEBP XIM XWIDGETS ZLIB
-traits     batch server-running envvar-file custom-file
-modules    :config use-package :completion (corfu +icons +dabbrev
-	   +orderless) (ivy +childframe +fuzzy +icons +prescient) :ui
-	   deft doom doom-dashboard doom-quit (emoji +ascii +github
-	   +unicode) hl-todo indent-guides (ligatures +extra) modeline
-	   nav-flash ophints (popup +all +defaults) (treemacs +lsp)
-	   unicode (vc-gutter +pretty +diff-hl) vi-tilde-fringe
-	   (window-select +numbers) workspaces zen :editor (evil
-	   +everywhere) file-templates fold (format +onsave) snippets
-	   word-wrap :emacs (dired +ranger +icons) electric (ibuffer
-	   +icons) undo vc :term vterm :checkers (syntax +childframe)
-	   (spell +flyspell) grammar :tools (debugger +lsp) (docker
-	   +lsp) editorconfig ein (eval +overlay) (lookup +dictionary
-	   +offline +docsets) (lsp +peek) (magit +forge) pdf rgb
-	   tree-sitter :os macos (tty +osc) :lang (cc +lsp +tree-sitter)
-	   data (elixir +lsp +tree-sitter) emacs-lisp (erlang +lsp
-	   +tree-sitter) (go +lsp +tree-sitter) (graphql +lsp) (json
-	   +lsp +tree-sitter) (java +tree-sitter +lsp) (javascript +lsp
-	   +tree-sitter) (latex +lsp +fold +cdlatex +latexmk) (markdown
-	   +grip) (nix +tree-sitter +lsp) (org +dragndrop +gnuplot +hugo
-	   +journal +jupyter +noter +pandoc +pomodoro +present +pretty)
-	   (python +lsp +pyright +tree-sitter +cython +poetry) (sh +lsp
-	   +tree-sitter) (web +lsp +tree-sitter) (yaml +lsp
-	   +tree-sitter) :app calendar everywhere :config (default
-	   +bindings +smartparens)
-packages   (hl-todo) (blamer) (magit-todos) (magit-todos) (circadian)
-#+end_src
+features   ACL DBUS GIF GLIB GMP GNUTLS IMAGEMAGICK JPEG LCMS2 LIBXML2 MODULES
+           NATIVE_COMP NOTIFY KQUEUE NS PDUMPER PNG RSVG SQLITE3 THREADS TIFF
+           TOOLKIT_SCROLL_BARS TREE_SITTER WEBP XIM XWIDGETS ZLIB
+traits     gui server-running envvar-file custom-file
+custom     connection-local-criteria-alist connection-local-profile-alist
+           safe-local-variable-values package-selected-packages org-agenda-files
+           elfeed-feeds
+modules    :config use-package :completion (corfu +icons +dabbrev +orderless) (vertico
+           +childframe +icons) :ui doom doom-dashboard (emoji +ascii +github +unicode)
+           hl-todo indent-guides (ligatures +extra) minimap modeline nav-flash ophints
+           (popup +defaults) smooth-scroll (treemacs +lsp) unicode (vc-gutter +pretty)
+           vi-tilde-fringe (window-select +numbers) workspaces (zen +mixed-pitch-mode
+           +writeroom-mode) :editor (evil +everywhere) file-templates fold (format
+           +onsave) rotate-text snippets (&nopath whitespace +guess +trim) word-wrap
+           :emacs (dired +dirvish +icons) electric eww (ibuffer +icons) tramp undo vc
+           :term vterm :checkers (syntax +childframe +flymake +icons) (spell +flyspell
+           +enchant +everywhere) grammar :tools (debugger +lsp) direnv docker
+           editorconfig ein (eval +overlay) (lookup +dictionary +offline +docsets) llm
+           (lsp +peek) (magit +forge) pdf tmux tree-sitter :os macos tty :lang (cc
+           +lsp +tree-sitter) data (elixir +tree-sitter +lsp) emacs-lisp (erlang +lsp
+           +tree-sitter) (go +lsp +tree-sitter) (graphql +lsp) (json +tree-sitter
+           +lsp) (java +tree-sitter +lsp) (javascript +lsp +tree-sitter) (latex
+           +cdlatex +fold +lsp) (markdown +grip) (org +dragndrop +gnuplot +hugo
+           +journal +jupyter +noter +pandoc +pomodoro +present +pretty) plantuml
+           graphviz (python +conda +cython +lsp +poetry +pyright +tree-sitter) (rest
+           +jq) (sh +lsp +tree-sitter) (web +lsp +tree-sitter) (yaml +lsp
+           +tree-sitter) :app calendar everywhere (rss +org +youtube) :config (default
+           +gnupg +bindings +smartparens)
+packages   (magit :recipe (:host github :repo magit/magit :branch main)) (hl-todo)
+           (blamer) (magit-todos) (circadian) (ob-mermaid) (org-modern) (toc-org)
+           (tree-sitter) (tree-sitter-langs) (org-pdftools :recipe (:host github :repo
+           fuxialexander/org-pdftools)) (org-noter-pdftools :recipe (:host github
+           :repo fuxialexander/org-pdftools :files (org-noter-pdftools.el)))
+elpa       tablist pdf-tools org-pdftools org-noter-pdftools org-noter
+#+end_quote
+
+To enjoy the performance benefits of emacs 30, as well as to avoid some bugs and enjoy more modus themes, I've moved away from using the railwaycat port and am using the emacsplus port of emacs (for macos).
+
+Refer to [[https://github.com/d12frosted/homebrew-emacs-plus?tab=readme-ov-file#install][this README for emacsplus port]].
 
 ** MacOS Specific
 *** TODO Creating launchd service for emacs-daemon
@@ -67,5 +78,3 @@ plutil -lint /Library/LaunchAgents/gnu.emacs.daemon.plist
 
 sudo launchctl bootstrap system  /Library/LaunchAgents/gnu.emacs.daemon.plist
   #+end_src
-
-** Another
