@@ -26,7 +26,6 @@
         +icons
         +dabbrev
         +orderless
-
         )  ; complete with cap(f), cape and a flying feather!
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
@@ -56,7 +55,7 @@
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
-       smooth-scroll     ; So smooth you won't believe it's not butter
+       ( smooth-scroll +interpolate )     ; So smooth you won't believe it's not butter
        ;; tabs              ; a tab bar for Emacs
        (treemacs
         +lsp
@@ -146,7 +145,7 @@
        (magit             ; a git porcelain for Emacs
         +forge
         )
-       ;;make              ; run make tasks from Emacs
+       make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
        pdf               ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
@@ -211,7 +210,7 @@
        ;;julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        (latex             ; writing papers in Emacs has never been so fun
-        +cdlatex
+        ;; +cdlatex
         +fold
         +lsp
         )
@@ -223,13 +222,15 @@
         )
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
-       ;;ocaml             ; an objective camel
+       (ocaml             ; an objective camel
+        +lsp
+        )
+
        (org               ; organize your plain life in plain text
         ;; +contacts
         +dragndrop
         +gnuplot
         +hugo
-        +journal
         +jupyter
         +noter
         +pandoc
@@ -242,20 +243,20 @@
        graphviz          ; diagrams for confusing yourself even more
        ;;purescript        ; javascript, but functional
        (python            ; beautiful is better than ugly
-        +conda
+        +uv
         +cython
         +lsp
         +poetry
         +pyright
         +tree-sitter
         )
-       ;;qt                ; the 'cutest' gui framework ever
+       ( qt +lsp +tree-sitter )                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6
        (rest              ; Emacs as a REST client
         +jq
         )
-       ;;rst               ; ReST in peace
+       rst               ; ReST in peace
        ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        ;;(rust +lsp)       ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
@@ -285,7 +286,7 @@
 
        :app
        calendar
-       ;;emmS
+       ;;emm
        everywhere        ; *leave* Emacs!? You must be joking
        ;;irc               ; how neckbeards socialize
        (rss
@@ -300,5 +301,4 @@
         +bindings
         +smartparens
         )
-
        )
