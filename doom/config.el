@@ -1,8 +1,11 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
+;; safely spawns emacs server
+(require 'server)
+(unless (server-running-p) (server-start))
+
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
-
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
@@ -15,13 +18,36 @@
 ;; (setq auth-sources '("~/.authinfo"))
 (setq auth-sources '("~/.authinfo.gpg"))
 
-;; no title bar:
-(add-to-list 'default-frame-alist '(undecorated . t))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; IDE CONFIGS -- improving the developer experience ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; set no title bar for the window:
+(add-to-list 'default-frame-alist '(undecorated . t))
+
+;; =============== Slash image! ============================
+
+(defun get-custom-splash-message ()
+  "Insert a centered custom splash message with specific font and size."
+  (insert (propertize
+           (+doom-dashboard--center +doom-dashboard--width "\n🍀 Let's do great things today 🍀\n")
+           'face '(:height 2.0 :weight bold :family "Fira Sans"))))
+
+
+(setq fancy-splash-image (concat doom-user-dir "images/lake_louise_sunrise.png"))
+;; Remove default short menu from dashboard
+(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
+
+;; Prepend custom splash message to dashboard functions
+(add-hook! '+doom-dashboard-functions :prepend #'get-custom-splash-message)
+;; let frame be full size of current screen:
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
+;; =========================================================
+
+
+
+;; =============== Fonts ============================
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
 ;; - `doom-font' -- the primary font to use
@@ -37,22 +63,15 @@
 ;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
 ;;
-(setq
- doom-font (font-spec :family "Fira Code" :size 18 :weight 'regular)
- doom-variable-pitch-font (font-spec :family "Fira Sans" :size 18 :weight 'regular)
- ;; doom-symbol-font (font-spec :family "Symbola" :size 22 :weight 'Regular)
- )
 
-;; (defun my-custom-splash-message ()
-;;   "Insert a custom splash message with specific font and size."
-;;   (let ((message "Welcome to Doom Emacs!"))
-;;     (insert (propertize message 'face '(:height 2.0 :weight bold :family "Fira Sans")))))
-
-(defun get-custom-splash-message ()
-  "Insert a centered custom splash message with specific font and size."
-  (insert (propertize
-           (+doom-dashboard--center +doom-dashboard--width "\n🍀 Let's do great things today 🍀\n")
-           'face '(:height 2.0 :weight bold :family "Fira Sans"))))
+;; (setq
+;;  doom-font (font-spec :family "Fira Code" :size 18 :weight 'regular)
+;;  doom-variable-pitch-font (font-spec :family "Fira Sans" :size 18 :weight 'regular)
+;;  ;; doom-symbol-font (font-spec :family "Symbola" :size 22 :weight 'Regular)
+;; Monospace for code
+(setq doom-font (font-spec :family "Iosevka NF" :size 18 :weight 'regular))
+;; Proportional for prose/org-mode
+(setq doom-variable-pitch-font (font-spec :family "Iosevka NFP" :size 18))
 
 
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
@@ -63,16 +82,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-ir-black)
-;; =============== Slash image! ============================
-(setq fancy-splash-image (concat doom-user-dir "images/lake_louise_sunrise.png"))
-;; Remove default short menu from dashboard
-(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
-
-;; Prepend custom splash message to dashboard functions
-(add-hook! '+doom-dashboard-functions :prepend #'get-custom-splash-message)
-;; let frame be full size of current screen:
-(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+;; (setq doom-theme 'doom-ir-black)
 
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
@@ -80,9 +90,15 @@
 (setq display-line-numbers-type 'relative)
 ;; (setq whitespace-style '(face tabs spaces trailing lines space-before-tab newline indentation empty space-after-tab space-mark tab-mark newline-mark missing-newline-at-eof))
 
+;; =========================================================
+
+
+
+;; =============== ORG MODE ============================
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; ORG MODE CONFIGS! ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
+(setq cdlatex-math-symbol-alist nil)
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
@@ -119,6 +135,22 @@
                  plain (clock)
                  "+ Note @ %U \n Context \n %i %a"))
   )
+
+;; ===== org-babel tangle keymaps (only for org mode)
+(map! :map org-mode-map
+      :localleader
+      "t" nil  ;; clear the existing "t" prefix
+      "tt" #'org-babel-tangle
+      "tb" #'org-babel-tangle-single-block)
+
+;; %%%%%%%%%%% ORG EXPORTER CUSTOM BACKEND FUNCTIONS %%%%%%%%%%%%%
+;; the functions below are my own exporter overrides for the creation of
+;; html files from org files.
+
+;; TODO: add this part in, the current export is pretty annoying and it applies for ALL languages.
+;; - also see if we can use a js based syntax highlighter instead of using htmlize
+;; when htmlize runs, it picks up the actual view from the buffer, so indent guides (with | chars) are copied over.
+;; this function should ignore the indent guides for the exporting.
 
 ;; exporter backend function for collapsible block for source code
 (defun my/org-html-collapsible-src-block (src-block contents info)
@@ -195,12 +227,6 @@ The first non-blank line inside the drawer is used as the header."
                                                         (drawer . my/org-html-collapsible-drawer)
                                                         (headline . my/org-html-headline-with-anchor))))
 
-;; (defun my/org-export-to-html (&optional async subtreep visible-only body-only ext-plist)
-;;   "Export current buffer to a collapsible HTML file."
-;;   (interactive)
-;;   (org-export-to-file 'my-html
-;;       (org-export-output-file-name ".html" subtreep)
-;;     async subtreep visible-only body-only ext-plist))
 
 (defun my/org-export-to-html (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to a collapsible HTML file and open it in the default web browser."
@@ -212,11 +238,72 @@ The first non-blank line inside the drawer is used as the header."
       (browse-url (concat "file://" (expand-file-name output-file))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;    ;;;;;;;;;;;;;;;;;;;;;;
+;; =========================================================
+;; ======================== Frame Opacity ========================
+
+(defvar my/frame-opacity 80
+  "Default frame opacity (0-100).")
+
+;; Seed default-frame-alist at load time so the first emacsclient frame inherits it
+(push `(alpha . ,my/frame-opacity) default-frame-alist)
+
+(defun my/apply-opacity ()
+  "Apply opacity to all current and future frames."
+  (modify-all-frames-parameters `((alpha . ,my/frame-opacity))))
+
+(add-hook 'doom-init-ui-hook #'my/apply-opacity)
+(add-hook 'server-after-make-frame-hook #'my/apply-opacity)
+
+(defun my/toggle-transparency ()
+  "Toggle between 100% and 90% opacity."
+  (interactive)
+  (setq my/frame-opacity (if (= my/frame-opacity 100) 90 100))
+  (my/apply-opacity)
+  (message "Opacity: %d%%" my/frame-opacity))
+
+(defun my/set-opacity (value)
+  "Set opacity to VALUE (0-100)."
+  (interactive "nOpacity (0-100): ")
+  (setq my/frame-opacity (max 0 (min 100 value)))
+  (my/apply-opacity)
+  (message "Opacity set to %d%%" my/frame-opacity))
+
+(global-set-key (kbd "C-c t") #'my/toggle-transparency)
+
+;; ================================================================
+
+;; ;; ======================== Frame Opacity ========================
+
+;; (defvar my/frame-opacity 80
+;;   "Default frame opacity (0-100).")
+
+;; (defun my/apply-opacity ()
+;;   "Apply opacity to all current and future frames."
+;;   (modify-all-frames-parameters `((alpha . ,my/frame-opacity))))
+
+;; (add-hook 'doom-init-ui-hook #'my/apply-opacity)
+;; (add-hook 'server-after-make-frame-hook #'my/apply-opacity)
+
+;; (defun my/toggle-transparency ()
+;;   "Toggle between 100% and 90% opacity."
+;;   (interactive)
+;;   (setq my/frame-opacity (if (= my/frame-opacity 100) 90 100))
+;;   (my/apply-opacity)
+;;   (message "Opacity: %d%%" my/frame-opacity))
+
+;; (defun my/set-opacity (value)
+;;   "Set opacity to VALUE (0-100)."
+;;   (interactive "nOpacity (0-100): ")
+;;   (setq my/frame-opacity (max 0 (min 100 value)))
+;;   (my/apply-opacity)
+;;   (message "Opacity set to %d%%" my/frame-opacity))
+
+;; (global-set-key (kbd "C-c t") #'my/toggle-transparency)
+
+;; ;; ================================================================
 
 
-
-
-
+;; =============== Package Configs ============================
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
 ;;
@@ -249,71 +336,115 @@ The first non-blank line inside the drawer is used as the header."
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-
-;;;;;;;;;;;;;;;;;;;;;;
-;; CUSTOM FUNCTIONS ;;
-;;;;;;;;;;;;;;;;;;;;;;
-
-;;>> transparency things:
-;;(set-frame-parameter (selected-frame) 'alpha '(<active> . <inactive>))
-;;(set-frame-parameter (selected-frame) 'alpha <both>)
-(set-frame-parameter (selected-frame) 'alpha '(90))
-(add-to-list 'default-frame-alist '(alpha . (90)))
-
-
-(defun toggle-transparency ()
-  (interactive)
-  (let ((alpha (frame-parameter nil 'alpha)))
-    (set-frame-parameter
-     nil 'alpha
-     (if (eql (cond ((numberp alpha) alpha)
-                    ((numberp (cdr alpha)) (cdr alpha))
-                    ;; Also handle undocumented (<active> <inactive>) form.
-                    ((numberp (cadr alpha)) (cadr alpha)))
-              100)
-         '(90) '(100)))))
-(global-set-key (kbd "C-c t") #'toggle-transparency)
-
-;; Set opacity of emacs frames
-(defun opacity (value)
-  "Sets the opacity of the frame window. 0=transparent/100=opaque"
-  (interactive "nOpacity Value 0 - 100 opaque:")
-  (set-frame-parameter (selected-frame) 'alpha value))
-
-
-
-
-;;;;;;;;;;;;;;;
-;; OVERRIDES ;;
-;;;;;;;;;;;;;;;
-
-;; outlines searchable comments in the code:
+;; outlines searchable comments in the code, for the modus themes and specific to light/dark theme
 (after! hl-todo
-  (setq hl-todo-keyword-faces
-	'(("TODO"   . "#FF0000")
-	  ("FIXME"  . "#FF0000")
-	  ("DEBUG"  . "#A020F0")
-	  ("GOTCHA" . "#FF4500")
-	  ("STUB"   . "#1E90FF")
-	  ("DEPRECATED"   . "#00FF00")
-          )
-        )
-  )
+  (defun my-hl-todo-set-keyword-faces (&rest _)
+    (setq hl-todo-keyword-faces
+          (if (member (car custom-enabled-themes) '(modus-operandi modus-operandi-tinted))
+              ;; Light themes
+              `(("TODO" . ,(modus-themes-get-color-value 'red-intense))
+                ("FIXME" . ,(modus-themes-get-color-value 'red-intense))
+                ("HACK" . ,(modus-themes-get-color-value 'yellow-intense))
+                ("BUG" . ,(modus-themes-get-color-value 'red-intense))
+                ("XXX" . ,(modus-themes-get-color-value 'magenta-intense))
+                ("STUB" . ,(modus-themes-get-color-value 'blue-intense))
+                ("NOTE" . ,(modus-themes-get-color-value 'blue-cooler))
+                ("REVIEW" . ,(modus-themes-get-color-value 'yellow-intense))
+                ("OPTIMIZE" . ,(modus-themes-get-color-value 'green-intense))
+                ("DEPRECATED" . ,(modus-themes-get-color-value 'cyan-intense))
+                ("TEMP" . ,(modus-themes-get-color-value 'yellow-faint))
+                ("HOLD" . ,(modus-themes-get-color-value 'fg-faint))
+                ("DONE" . ,(modus-themes-get-color-value 'green-cooler)))
+            ;; Dark themes
+            `(("TODO" . ,(modus-themes-get-color-value 'red-intense))
+              ("FIXME" . ,(modus-themes-get-color-value 'red-intense))
+              ("HACK" . ,(modus-themes-get-color-value 'yellow-intense))
+              ("BUG" . ,(modus-themes-get-color-value 'red-intense))
+              ("XXX" . ,(modus-themes-get-color-value 'magenta-intense))
+              ("STUB" . ,(modus-themes-get-color-value 'blue-intense))
+              ("NOTE" . ,(modus-themes-get-color-value 'blue-cooler))
+              ("REVIEW" . ,(modus-themes-get-color-value 'yellow-intense))
+              ("OPTIMIZE" . ,(modus-themes-get-color-value 'green-intense))
+              ("DEPRECATED" . ,(modus-themes-get-color-value 'cyan-intense))
+              ("TEMP" . ,(modus-themes-get-color-value 'yellow-faint))
+              ("HOLD" . ,(modus-themes-get-color-value 'fg-faint))
+              ("DONE" . ,(modus-themes-get-color-value 'green-cooler)))))
+    (font-lock-flush)
+    (font-lock-ensure))
+  (add-hook 'modus-themes-after-load-theme-hook #'my-hl-todo-set-keyword-faces))
+
+(setq ispell-program-name "aspell")
+(setq ispell-dictionary "en_GB")
+(setq ispell-local-dictionary "en_GB")
+
+
+(blink-cursor-mode 1)             ;; Enable cursor blinking
+(setq blink-cursor-blinks 0)      ;; Blink forever while idle
+(setq blink-cursor-interval 0.5)  ;; Blink interval (in seconds, can adjust)
+
+;; For Modus Operandi (light)
+(setq modus-operandi-palette-overrides
+      '((cursor "#228B22")))    ;; Forest green
+
+;; For Modus Vivendi (dark)
+(setq modus-vivendi-palette-overrides
+      '((cursor "#00FF00")))    ;; Bright green
+
 
 (after! magit
+  (setq magit-git-editor nil)
   (setq magit-revision-show-gravatars '("^Author: t" . "^Commit: t"))
   (setq magit-diff-refine-hunk 'all)
+  ;; Show word-diff in diffs (great for reviewing changes within lines)
+  (setq magit-diff-options '("--word-diff"))
+  ;; Automatically refresh status buffer after performing actions
+  (setq magit-refresh-status-buffer nil)
   )
-
-
-;; (use-package! latex-preview-pane)
-;; (latex-preview-pane-enable)
 
 (use-package magit-todos
   :after magit
   :config (magit-todos-mode 1)
   )
 
+;; (use-package! latex-preview-pane)
+;; (latex-preview-pane-enable)
+
+;;(use-package blamer
+;;  :bind (("s-i" . blamer-show-commit-info))
+;;  :defer 20
+;;  :custom
+;;  (blamer-idle-time 0.3)
+;;  (blamer-min-offset 20)
+;;  :custom-face
+;;  (blamer-face
+;;   ;; Use `modus-themes-with-colors` to get palette-dependent foreground color
+;;   (modus-themes-with-colors
+;;     (let ((fg (if (eq (car custom-enabled-themes) 'modus-operandi)
+;;                   modus-themes-blue-alt   ;; light theme blue
+;;                 modus-themes-magenta-alt))) ;; dark theme magenta
+;;       `((t :foreground ,fg
+;;          :background nil
+;;          :height 140
+;;          :italic t)))))
+;;  :config
+;;  (global-blamer-mode 0))
+
+(defun my/blamer-face-modus-theme ()
+  (modus-themes-with-colors
+    (let* ((theme (car custom-enabled-themes))
+           (fg (cond
+                ((memq theme '(modus-operandi modus-operandi-tinted modus-operandi-deuteranopia))
+                 magenta-cooler)  ;; light theme color
+                ((memq theme '(modus-vivendi modus-vivendi-tinted modus-vivendi-deuteranopia))
+                 magenta)         ;; dark theme color
+                (t magenta))))     ;; fallback
+      (custom-set-faces
+       `(blamer-face ((,c :foreground ,fg
+                          :background nil
+                          :height 140
+                          :italic t)))))))
+
+(add-hook 'modus-themes-after-load-theme-hook #'my/blamer-face-modus-theme)
 
 (use-package blamer
   :bind (("s-i" . blamer-show-commit-info))
@@ -321,13 +452,12 @@ The first non-blank line inside the drawer is used as the header."
   :custom
   (blamer-idle-time 0.3)
   (blamer-min-offset 20)
-  :custom-face
-  (blamer-face ((t :foreground "#7a88cf"
-                   :background nil
-                   :height 140
-                   :italic t)))
   :config
-  (global-blamer-mode 0))
+  (global-blamer-mode 0)
+  ;; Apply face once initially
+  (my/blamer-face-modus-theme))
+
+
 
 ;; ox-hugo configurations
 (use-package ox-hugo
@@ -337,39 +467,27 @@ The first non-blank line inside the drawer is used as the header."
 
 
                                         ; my usual places;
-(defvar sg-lat 1.334510)
-(defvar sg-long 103.721200)
-(defvar to-lat 43.653225)
-(defvar to-long -79.383186)
+
 
 ;; auto theme-switching based on system by hooking onto system events:
 (defun my/apply-theme (appearance)
   "Load theme, taking current system APPEARANCE into consideration."
   (mapc #'disable-theme custom-enabled-themes)
   (pcase appearance
-    ('light (load-theme 'modus-operandi t))
+    ('light (load-theme 'modus-operandi-tinted t))
     ('dark (load-theme 'modus-vivendi t))))
 
 (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 
-;; (use-package! circadian
-;;   :ensure t
-;;   :config
-;;   ;; (setq calendar-latitude sg-lat)
-;;   ;; (setq calendar-longitude sg-long)
-;;   (setq calendar-latitude sg-lat)
-;;   (setq calendar-longitude sg-long)
-;;   (setq circadian-themes '((:sunrise . doom-gruvbox-light)
-;;                            (:sunset  . doom-monokai-machine)))
-;;   (circadian-setup))
+;; Set cursor color to bright green for all Modus themes
+(after! modus-themes
+  (set-cursor-color "#00FF00")) ;; Bright green hex code
 
-;; (add-hook 'circadian-after-load-theme-hook
-;;           '(lambda (theme)
-;;              ;; Line numbers appearance
-;;              (setq linum-format 'linum-format-func)
-;;              ;; Cursor
-;;              (set-default 'cursor-type 'box)
-;;              (set-cursor-color "#F52503")))
+;; Enable blinking cursor
+(blink-cursor-mode 1)
+
+;; Optionally adjust blink timing (in seconds)
+(setq blink-cursor-interval 0.5) ;; half a second
 
 ;; DOOM Modeline configs
 (setq doom-modeline-height 28) ; Set minimum height
@@ -394,24 +512,50 @@ The first non-blank line inside the drawer is used as the header."
 (use-package ob-mermaid
   :after org
   :config
-  (setq ob-mermaid-cli-path "/Users/rtshkmr/.nvm/versions/node/v20.13.1/bin/mmdc"))  ; Adjust path as needed
+  (setq ob-mermaid-cli-path "/Users/rtshkmr/.nvm/versions/node/v23.3.0/bin/mmdc"))  ; Adjust path as needed
+
+;; Org Babel Explicit Whitelist:
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((mermaid . t)
+   (python . t)
+   (ocaml . t)))
+
 
 ;; extensions to org noter:
+;; (use-package! org-noter
+;;   :after (:any org pdf-view)
+;;   :config
+;;   ;; Your org-noter config here
+;;   (require 'org-noter-pdftools)
+
+;;   )
+
+;; (use-package! org-pdftools
+;;   :after org
+;;   :hook (org-mode . org-pdftools-setup-link))
+
+;; (use-package! org-noter-pdftools
+;;   :after org-noter
+;;   :config
+;;   (with-eval-after-load 'pdf-annot
+;;     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+
+(use-package! pdf-tools
+  :defer t)
+
 (use-package! org-noter
-  :after (:any org pdf-view)
-  :config
-  ;; Your org-noter config here
-  (require 'org-noter-pdftools))
-
-(use-package! org-pdftools
   :after org
-  :hook (org-mode . org-pdftools-setup-link))
+  :defer t)
 
-(use-package! org-noter-pdftools
-  :after org-noter
-  :config
-  (with-eval-after-load 'pdf-annot
-    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+;; (use-package! org-noter-pdftools
+;;   :after (org-noter pdf-tools)
+;;   :config
+;; Only activate AFTER epdfinfo exists
+;;   (when (and (boundp 'pdf-info-epdfinfo-program)
+;;              pdf-info-epdfinfo-program
+;;              (file-executable-p pdf-info-epdfinfo-program))
+;;     (org-noter-pdftools-mode 1)))
 
 
 
@@ -428,17 +572,59 @@ The first non-blank line inside the drawer is used as the header."
   (setq projectile-auto-discover nil)
   )
 
-;; Modus themes gave me some issues, this allows me to set the bullet list faces correctly, based on light/dark
-;; (add-hook 'modus-themes-after-load-theme-hook
-;;           (lambda ()
-;;             (pcase modus-themes--current-theme
-;;               ('modus-operandi
-;;                (modus-themes-with-colors
-;;                  (custom-set-faces!
-;;                    `(org-list-dt :foreground ,blue-intense)
-;;                    `(org-list    :foreground ,blue-intense))))
-;;               ('modus-vivendi
-;;                (modus-themes-with-colors
-;;                  (custom-set-faces!
-;;                    `(org-list-dt :foreground ,cyan)
-;;                    `(org-list    :foreground ,cyan)))))))
+;; === special ocaml setup:
+(let ((opam-share (ignore-errors (car (process-lines "opam" "var" "share")))))
+  (when (and opam-share (file-directory-p opam-share))
+    ;; Register Merlin
+    (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
+    (autoload 'merlin-mode "merlin" nil t nil)
+    ;; Automatically start it in OCaml buffers
+    (add-hook 'tuareg-mode-hook 'merlin-mode t)
+    (add-hook 'caml-mode-hook 'merlin-mode t)
+
+    ))
+;; Use opam switch to lookup ocamlmerlin binary
+(setq merlin-command 'opam)
+
+;;----- ocp-indent
+(add-to-list 'load-path "/Users/rtshkmr/.opam/default/share/emacs/site-lisp")
+(require 'ocp-indent)
+
+(setq spacious-padding-widths
+      '( :internal-border-width 15
+         :header-line-width 4
+         :mode-line-width 6
+         :tab-width 4
+         :right-divider-width 30
+         :scroll-bar-width 8))
+(spacious-padding-mode 1)
+
+
+;; %%%% TRAMP improvements %%%%%%
+(connection-local-set-profile-variables
+ 'remote-direct-async-process
+ '((tramp-direct-async-process . t)))
+
+(connection-local-set-profiles
+ '(:application tramp :protocol "ssh")
+ 'remote-direct-async-process)
+
+
+;; %%%%-------------------- LLM Configs ------------------------ %%%%%%
+;; Mistral offers an OpenAI compatible API
+(gptel-make-openai "MistralLeChat"  ;Any name you want
+  :host "api.mistral.ai"
+  :endpoint "/v1/chat/completions"
+  :protocol "https"
+  :key <KEY>               ;can be a function that returns the key
+  :models '("mistral-small"))
+
+;; OPTIONAL configuration
+(setq gptel-model   'mistral-small
+      gptel-backend
+      (gptel-make-openai "MistralLeChat"  ;Any name you want
+        :host "api.mistral.ai"
+        :endpoint "/v1/chat/completions"
+        :protocol "https"
+        :key <KEY>               ;can be a function that returns the key
+        :models '("mistral-small")))
