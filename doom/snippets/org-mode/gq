@@ -1,0 +1,30 @@
+# -*- mode: snippet -*-
+# name: Google Hiring Assessment Behavioural Question
+# uuid:
+# key: gq
+# condition: t
+# --
+
+** Q${1: }: ${2:One-line question summary}
+:PROPERTIES:
+:tags: :${3:topic1:topic2}:
+:time_taken: ${4:~?m}
+:confidence: ${5:1–5}
+:END:
+
+*** Question Dump
+${6:Paste full question text here}
+
+*** Summary
+- ${7:Quick 1-liner of what it’s testing}
+
+*** Breakdown
+- Premise(s): ${8:...}
+- Hidden logic / trap: ${9:...}
+- Behavioral cue: ${10:...}
+
+*** Response
+- ${11:Chosen option or reasoning path}
+
+*** Reflection
+- ${12:Consistency check or insight}

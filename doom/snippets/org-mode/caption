@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: generic caption
+# uuid: 6c321403-9fb7-4eff-a530-2a44af2e4ef1
+# key: caption
+# condition: t
+# --
+
+#+caption: ${1:Your caption here}

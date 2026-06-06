@@ -1,13 +1,11 @@
 # dotfiles
 * Dotfiles
-This is a quick and dirty way to organise my dotfiles.
 
 ** Current Doom Info
 
-here's my infodump:
 #+begin_quote
-generated  Mar 15, 2026 23:18:58
-system     MacOS 26.3.1 Darwin 25.3.0 arm64
+generated  Jun 07, 2026 02:03:39
+system     MacOS 26.5.1 Darwin 25.5.0 arm64
 emacs      30.2 EMACSDIR=~/.config/emacs/
 	   EMACS=/Applications/Emacs.app/Contents/MacOS/Emacs
 doom       3.0.0-pre PROFILE=_default@0 HEAD -> master d23bbe877
@@ -44,15 +42,12 @@ modules    :config use-package :completion (corfu +icons +dabbrev
 	   +tree-sitter) (yaml +lsp +tree-sitter) :app calendar
 	   everywhere (rss +org +youtube) :config (default +gnupg
 	   +bindings +smartparens)
-packages   (nov) (magit :recipe (:host github :repo magit/magit :branch
-	   main)) (hl-todo) (blamer) (magit-todos) (circadian)
-	   (ob-mermaid) (org-modern) (toc-org) (spacious-padding)
-	   (tree-sitter) (tree-sitter-langs) (org-pdftools :recipe
-	   (:host github :repo fuxialexander/org-pdftools))
-	   (org-noter-pdftools :recipe (:host github :repo
-	   fuxialexander/org-pdftools :files (org-noter-pdftools.el)))
+packages   (nov) (blamer) (magit-todos) (ob-mermaid) (org-modern)
+	   (toc-org) (spacious-padding) (org-pdftools :recipe (:host
+	   github :repo fuxialexander/org-pdftools)) (org-noter-pdftools
+	   :recipe (:host github :repo fuxialexander/org-pdftools :files
+	   (org-noter-pdftools.el)))
 elpa       djvu
-
 #+end_quote
 
 To enjoy the performance benefits of emacs 30, as well as to avoid some bugs and enjoy more modus themes, I've moved away from using the railwaycat port and am using the emacsplus port of emacs (for macos).

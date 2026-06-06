@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: Hugo Mermaid Shortcode
+# uuid: b4a98b5c-45f3-4430-9e36-89d09bcd5f56
+# Key: mermaid
+# condition: t
+# --
+
+#+begin_mermaid
+$1
+#+end_mermaid

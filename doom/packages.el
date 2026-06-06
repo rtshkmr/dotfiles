@@ -49,18 +49,13 @@
 ;; (unpin! t)
 
 ;;(package! git-commit :pin "0b4d3a2e3f7a3b0bd0738c1c7f0b2f26a5a0ed02")
-
-(package! magit :recipe (:host github :repo "magit/magit" :branch "main"))
-(package! hl-todo)
+(package! nov)
 (package! blamer)
 (package! magit-todos)
-(package! circadian)
 (package! ob-mermaid)
 (package! org-modern)
 (package! toc-org)
-
-(package! tree-sitter)
-(package! tree-sitter-langs)
+(package! spacious-padding)
 
 ;; using org-noter extension: https://github.com/fuxialexander/org-pdftools
 (package! org-pdftools

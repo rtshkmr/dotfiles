@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: Details Dropdown
+# uuid: 795c8e57-b733-4ba0-9ee8-6a57b555549c
+# Key: dropdown
+# condition: t
+# --
+
+#+begin_details
+
+#+begin_summary
+${1:my summary}
+#+end_summary
+
+${2:details}
+#+end_details

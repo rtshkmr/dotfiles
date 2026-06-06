@@ -1,8 +1,13 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
 ;; safely spawns emacs server
-(require 'server)
-(unless (server-running-p) (server-start))
+(after! server
+  (unless (server-running-p)
+    (server-start)))
+
+
+;;;;;;;;;;;;;;;;;;;;
+;; Generic Admin  ;;
+;;;;;;;;;;;;;;;;;;;;
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
@@ -12,40 +17,25 @@
 ;; (setq user-full-name "John Doe"
 ;;       user-mail-address "john@doe.com")
 (setq user-full-name "Ritesh Kumar"
-      user-mail-address "ritesh@emerald.pink")
+      user-mail-address "hello@rtshkmr.com")
 
 ;; auth sources used by bots, outlined in documentation: https://magit.vc/manual/ghub.html#Storing-a-Token
-;; (setq auth-sources '("~/.authinfo"))
 (setq auth-sources '("~/.authinfo.gpg"))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; IDE CONFIGS -- improving the developer experience ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;
+;; Doom Aesthetics ;;
+;;;;;;;;;;;;;;;;;;;;;
 
-;; set no title bar for the window:
-(add-to-list 'default-frame-alist '(undecorated . t))
+;; =============== Doom Theme ============================
+;; auto theme-switching based on system by hooking onto system events:
+(defun my/apply-theme (appearance)
+  "Load theme, taking current system APPEARANCE into consideration."
+  (mapc #'disable-theme custom-enabled-themes)
+  (pcase appearance
+    ('light (load-theme 'modus-operandi-tinted t))
+    ('dark (load-theme 'modus-vivendi t))))
 
-;; =============== Slash image! ============================
-
-(defun get-custom-splash-message ()
-  "Insert a centered custom splash message with specific font and size."
-  (insert (propertize
-           (+doom-dashboard--center +doom-dashboard--width "\n🍀 Let's do great things today 🍀\n")
-           'face '(:height 2.0 :weight bold :family "Fira Sans"))))
-
-
-(setq fancy-splash-image (concat doom-user-dir "images/lake_louise_sunrise.png"))
-;; Remove default short menu from dashboard
-(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
-
-;; Prepend custom splash message to dashboard functions
-(add-hook! '+doom-dashboard-functions :prepend #'get-custom-splash-message)
-;; let frame be full size of current screen:
-(add-to-list 'initial-frame-alist '(fullscreen . maximized))
-
-;; =========================================================
-
-
+(add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 
 ;; =============== Fonts ============================
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
@@ -60,19 +50,9 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
-;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-;;
-
-;; (setq
-;;  doom-font (font-spec :family "Fira Code" :size 18 :weight 'regular)
-;;  doom-variable-pitch-font (font-spec :family "Fira Sans" :size 18 :weight 'regular)
-;;  ;; doom-symbol-font (font-spec :family "Symbola" :size 22 :weight 'Regular)
-;; Monospace for code
-(setq doom-font (font-spec :family "Iosevka NF" :size 18 :weight 'regular))
-;; Proportional for prose/org-mode
-(setq doom-variable-pitch-font (font-spec :family "Iosevka NFP" :size 18))
-
+(let ((font-size 18))
+  (setq doom-font (font-spec :family "Fira Code" :size font-size :weight 'regular)
+        doom-variable-pitch-font (font-spec :family "Literata" :size font-size)))
 
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -90,219 +70,231 @@
 (setq display-line-numbers-type 'relative)
 ;; (setq whitespace-style '(face tabs spaces trailing lines space-before-tab newline indentation empty space-after-tab space-mark tab-mark newline-mark missing-newline-at-eof))
 
-;; =========================================================
+(blink-cursor-mode 1)             ;; Enable cursor blinking
+(setq blink-cursor-blinks 0)      ;; Blink forever while idle
+(setq blink-cursor-interval 0.5)  ;; Blink interval (in seconds, can adjust)
+
+;; ======================== Frame Opacity ========================
+
+(defvar my/frame-opacity--value 80
+  "Default frame opacity (0-100).")
+
+(defun my/frame-opacity ()
+  "Gets current opacity value -- a pure query."
+  my/frame-opacity--value)
+
+(defun my/set-frame-opacity! (value)
+  "Sets opacity value and apply it (impure)."
+  (setq my/frame-opacity--value (max 0 (min 100 value)))
+  (modify-all-frames-parameters `((alpha . ,my/frame-opacity--value)))
+  (message "Opacity: %d%%" my/frame-opacity--value))
+
+(defun my/toggle-frame-opacity! ()
+  "Toggles opacity 80 <-> 100."
+  (interactive)
+  (my/set-frame-opacity! (if (= (my/frame-opacity) 100) 80 100)))
+
+;; init:
+(defun my/init-frame-defaults ()
+  "Initialises frame defaults, relies on my/frame-opacity--value"
+
+  (setq default-frame-alist
+        `((undecorated . t)
+          (alpha . ,my/frame-opacity--value)  ;; sets no title bar for the window; backtick, interpolates the var;
+          (fullscreen . fullboth))))
+
+(my/init-frame-defaults)
+
+(defun my/apply-frame-opacity-on-init ()
+  "Apply configured opacity to all frames."
+  (modify-all-frames-parameters
+   `((alpha . ,my/frame-opacity--value))))
 
 
+;; Apply opacity to existing frames on startup and new server frames
+(add-hook 'doom-init-ui-hook #'my/apply-frame-opacity-on-init)
+(add-hook 'server-after-make-frame-hook #'my/apply-frame-opacity-on-init)
 
-;; =============== ORG MODE ============================
-;;;;;;;;;;;;;;;;;;;;;;;
-;; ORG MODE CONFIGS! ;;
-;;;;;;;;;;;;;;;;;;;;;;;
-(setq cdlatex-math-symbol-alist nil)
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
-(global-set-key (kbd "C-c l") #'org-store-link)
-(global-set-key (kbd "C-c a") #'org-agenda)
-(global-set-key (kbd "C-c c") #'org-capture)
+(map! :leader
+      :desc "Toggle opacity" "t o" #'my/toggle-frame-opacity!)
 
-;; Each sequence of keywords defines its own todo states, this is how we can set custom workflows
-;; NOTE: it's good if the keywords are all unique!!
-;; this defines a custom workflow of todo states and done states, delimited by |
-;;
-;; configuration on a per-keyword basis for this.  This is
-;; achieved by adding special markers ‘!’ (for a timestamp) or ‘@’ (for a
-;; note with timestamp) in parentheses after each keyword
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "|" "DONE(d)")
-        (sequence "|" "CANCELED(c)")))
+;; =============== Startup, splash image ============================
 
-(setq org-log-done 'note) ;; when a todo is done, records a note along w a timestamp
-(setq org-log-redeadline 'note) ;; when a todo is done, records a note along w a timestamp
 
-(setq org-agenda-include-inactive-timestamps t) ;; shows inactive time stamps
+(defconst my/splash-message "🍀 Let's do great things today 🍀"
+  "Custom splash screen message.")
 
-;; note: doom has it's own templates, so the var list has to be modded instead
+(defface my/splash-message-face
+  '((t (:height 2.0 :weight bold :family "Literata")))
+  "Face for custom splash message.")
+
+(defun my/doom-dashboard-insert-splash ()
+  "Insert centered custom splash message on dashboard."
+  (insert (propertize
+           (+doom-dashboard--center +doom-dashboard--width
+                                    (format "\n%s\n" my/splash-message))
+           'face 'my/splash-message-face)))
+
+;; Configure dashboard
+(setq fancy-splash-image (expand-file-name "images/lake_louise_sunrise.png" doom-user-dir))
+
+(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
+(add-hook! '+doom-dashboard-functions :prepend #'my/doom-dashboard-insert-splash)
+
+;; =============== Doom Modeline ============================
+;; --- preload:
+;; Must be set BEFORE doom-modeline loads
+(setq doom-modeline-support-imenu t)
+(setq display-time-format "%H:%M:%S"
+      display-time-interval 1
+      battery-update-interval 30      )
+
+(after! doom-modeline
+  (setq doom-modeline-height 32
+        doom-modeline-icon t
+        doom-modeline-major-mode-icon t
+        doom-modeline-minor-modes nil
+        doom-modeline-indent-info nil
+        doom-modeline-buffer-encoding nil
+        doom-modeline-vcs-max-length 30
+
+        ;; Time & Battery
+        doom-modeline-battery t
+        doom-modeline-time t
+        doom-modeline-time-icon nil
+        doom-modeline-time-live-icon nil))
+
+;; Defer mode activations and use a sane update interval
+(add-hook 'doom-init-ui-hook
+          (lambda ()
+            (blink-cursor-mode 1)
+            (display-time-mode 1)
+            (display-battery-mode 1)))
+
+;; Pretty fonts for modeline
+(custom-set-faces!
+  '(mode-line
+    :family "Fira Code"
+    :height 0.95
+    :weight semi-bold)
+  '(mode-line-inactive
+    :family "Fira Code"
+    :height 0.9))
+
+
+;; =============== Spacious Padding ============================
+(use-package! spacious-padding
+  :config
+  (setq spacious-padding-widths
+        '(:internal-border-width 15
+          :header-line-width 4
+          :mode-line-width 0
+          :tab-width 4
+          :right-divider-width 30
+          :scroll-bar-width 8)
+        )
+  (spacious-padding-mode 1))
+
+;; =============== OS-specific: macOS ============================
+(setq ns-use-native-fullscreen nil) ;; macos: avoids separate full-screen mode taking its own virtual desktop
+(defun my/hide-transient-childframes (&rest _)
+  "Hide transient childframes (posframe, etc.) without killing them."
+  (when (fboundp 'posframe-hide-all)
+    (posframe-hide-all))
+  (dolist (f (frame-list))
+    (when (frame-parameter f 'parent-frame)
+      (make-frame-invisible f t))))
+
+(defun my/after-fullscreen-toggle (&rest _)
+  ;; Small delay avoids macOS redraw race conditions
+  (run-with-timer 0.01 nil #'my/hide-transient-childframes))
+
+(advice-add 'toggle-frame-fullscreen :after #'my/after-fullscreen-toggle)
+
+;;;;;;;;;;;;;;
+;; Org Mode ;;
+;;;;;;;;;;;;;;
+
+;; =============== preloads: ============================
+(setq cdlatex-math-symbol-alist nil
+      ;; If you use `org' and don't want your org files in the default location below,
+      ;; change `org-directory'. It must be set before org loads!
+      org-directory "~/org/"
+
+      org-log-done 'note
+      org-log-redeadline 'note
+      org-agenda-include-inactive-timestamps t)
+
+;; Global keybindings
+(map! "C-c l" #'org-store-link
+      "C-c a" #'org-agenda
+      "C-c c" #'org-capture)
+
 (after! org
+  ;; Hooks
+  (add-hook 'org-mode-hook #'mixed-pitch-mode)
+
+  ;; babel: defer to after org loads -- this is about lazy registration
+  (add-to-list 'org-babel-load-languages '(mermaid . t))
+  (add-to-list 'org-babel-load-languages '(ocaml . t))
+
+  ;; Capture templates
   (add-to-list 'org-capture-templates
-               '("c"
-                 "Clocking templates"
-                 ))
-  ;; intent: add more context about the currently running task for future reference
+               '("c" "Clocking templates"))
   (add-to-list 'org-capture-templates
                '("cn"
                  "Add context to running clock"
                  plain (clock)
                  "+ Note @ %U \n Context \n %i %a"))
-  )
 
-;; ===== org-babel tangle keymaps (only for org mode)
-(map! :map org-mode-map
-      :localleader
-      "t" nil  ;; clear the existing "t" prefix
-      "tt" #'org-babel-tangle
-      "tb" #'org-babel-tangle-single-block)
+  ;; Local keymaps (org-mode only)
+  (map! :map org-mode-map
+        :localleader
+        "t" nil
+        "tt" #'org-babel-tangle
+        "tb" #'org-babel-tangle-single-block))
 
-;; %%%%%%%%%%% ORG EXPORTER CUSTOM BACKEND FUNCTIONS %%%%%%%%%%%%%
-;; the functions below are my own exporter overrides for the creation of
-;; html files from org files.
+;; =============== org babel: ============================
 
-;; TODO: add this part in, the current export is pretty annoying and it applies for ALL languages.
-;; - also see if we can use a js based syntax highlighter instead of using htmlize
-;; when htmlize runs, it picks up the actual view from the buffer, so indent guides (with | chars) are copied over.
-;; this function should ignore the indent guides for the exporting.
+(defun my/find-mmdc ()
+  "Finds mmdc binary in PATH or latest nvm Node version."
+  (or (executable-find "mmdc")
+      (when-let* ((nvm-dir (expand-file-name "~/.nvm"))
+                  ((file-directory-p nvm-dir))
+                  (versions (directory-files
+                             (expand-file-name "versions/node" nvm-dir)
+                             nil "^v" t))
+                  (latest (car (sort versions #'string>)))
+                  (mmdc (expand-file-name
+                         (format "versions/node/%s/bin/mmdc" latest)
+                         nvm-dir)))
+        (when (file-executable-p mmdc) mmdc))))
+;; (use-package ob-mermaid
+;;   :after org
+;;   :config
+;;   (setq ob-mermaid-cli-path "/Users/rtshkmr/.nvm/versions/node/v23.3.0/bin/mmdc"))  ; Adjust path as needed
 
-;; exporter backend function for collapsible block for source code
-(defun my/org-html-collapsible-src-block (src-block contents info)
-  "Wrap source blocks in a collapsible HTML container."
-  (let ((lang (org-element-property :language src-block)))
-    (format "<div class=\"collapsible\">
-  <div class=\"collapsible-header\">Show/Hide %s Code</div>
-  <div class=\"collapsible-content\">
-%s
-  </div>
-</div>"
-            (capitalize (or lang "Source"))
-            (org-export-with-backend 'html src-block contents info))))
+(use-package! ob-mermaid
+  :after org
+  :config
+  (when-let ((mmdc (my/find-mmdc)))
+    (setq ob-mermaid-cli-path mmdc)))
 
-;; exporter backend function for collapsible block for quotes
-(defun my/org-html-collapsible-quote-block (quote-block contents info)
-  "Wrap quote blocks in a collapsible HTML container."
-  (format "<div class=\"collapsible\">
-  <div class=\"collapsible-header\">Show/Hide Quote</div>
-  <div class=\"collapsible-content\">
-%s
-  </div>
-</div>"
-          (org-export-with-backend 'html quote-block contents info)))
+;; =============== org tooling: ============================
+(use-package! pdf-tools
+  :defer t)
 
+(use-package! org-noter
+  :after org
+  :defer t)
 
-;; exporter backend function for collapsible block for drawers
-(defun my/org-html-collapsible-drawer (drawer contents info)
-  "Export COLLAPSIBLE drawers as collapsible HTML blocks.
-The first non-blank line inside the drawer is used as the header."
-  (let* ((drawer-name (org-element-property :drawer-name drawer))
-         (is-collapsible (string= (downcase drawer-name) "collapsible")))
-    (if is-collapsible
-        (let* ((lines (split-string contents "\n"))
-               (header nil)
-               (body-lines '())
-               (found-header nil))
-          (dolist (line lines)
-            (cond
-             ((and (not found-header) (not (string-blank-p line)))
-              (setq header line)
-              (setq found-header t))
-             (found-header
-              (push line body-lines))))
-          (setq body-lines (nreverse body-lines))
-          (format "<div class=\"collapsible\">
-  <div class=\"collapsible-header\">%s</div>
-  <div class=\"collapsible-content\">
-%s
-  </div>
-</div>"
-                  (or header "Show/Hide")
-                  (org-trim (mapconcat #'identity body-lines "\n"))))
-      ;; Fallback for other drawers
-      (org-html-drawer drawer contents info))))
+(use-package! toc-org
+  :after org
+  :defer t)
 
-;; Custom headline function that adds anchor links
-(defun my/org-html-headline-with-anchor (headline contents info)
-  "Add anchor to headline using parent backend."
-  (let ((html (org-export-with-backend 'html headline contents info))
-        (id (or (org-element-property :CUSTOM_ID headline)
-                (org-export-get-reference headline info))))
-    (if (string-match "\\(<h[1-9][^>]*>\\)" html)
-        (replace-match
-         (format "%s<a class=\"anchor\" href=\"#%s\">※</a> "
-                 (match-string 1 html) id)
-         t t html)
-      html)))
-
-(with-eval-after-load 'ox-html
-  (org-export-define-derived-backend 'my-html 'html
-                                     :translate-alist '((src-block . my/org-html-collapsible-src-block)
-                                                        (quote-block . my/org-html-collapsible-quote-block)
-                                                        (drawer . my/org-html-collapsible-drawer)
-                                                        (headline . my/org-html-headline-with-anchor))))
-
-
-(defun my/org-export-to-html (&optional async subtreep visible-only body-only ext-plist)
-  "Export current buffer to a collapsible HTML file and open it in the default web browser."
-  (interactive)
-  (let ((output-file (org-export-to-file 'my-html
-                         (org-export-output-file-name ".html" subtreep)
-                       async subtreep visible-only body-only ext-plist)))
-    (when output-file
-      (browse-url (concat "file://" (expand-file-name output-file))))))
-
-;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;    ;;;;;;;;;;;;;;;;;;;;;;
-;; =========================================================
-;; ======================== Frame Opacity ========================
-
-(defvar my/frame-opacity 80
-  "Default frame opacity (0-100).")
-
-;; Seed default-frame-alist at load time so the first emacsclient frame inherits it
-(push `(alpha . ,my/frame-opacity) default-frame-alist)
-
-(defun my/apply-opacity ()
-  "Apply opacity to all current and future frames."
-  (modify-all-frames-parameters `((alpha . ,my/frame-opacity))))
-
-(add-hook 'doom-init-ui-hook #'my/apply-opacity)
-(add-hook 'server-after-make-frame-hook #'my/apply-opacity)
-
-(defun my/toggle-transparency ()
-  "Toggle between 100% and 90% opacity."
-  (interactive)
-  (setq my/frame-opacity (if (= my/frame-opacity 100) 90 100))
-  (my/apply-opacity)
-  (message "Opacity: %d%%" my/frame-opacity))
-
-(defun my/set-opacity (value)
-  "Set opacity to VALUE (0-100)."
-  (interactive "nOpacity (0-100): ")
-  (setq my/frame-opacity (max 0 (min 100 value)))
-  (my/apply-opacity)
-  (message "Opacity set to %d%%" my/frame-opacity))
-
-(global-set-key (kbd "C-c t") #'my/toggle-transparency)
-
-;; ================================================================
-
-;; ;; ======================== Frame Opacity ========================
-
-;; (defvar my/frame-opacity 80
-;;   "Default frame opacity (0-100).")
-
-;; (defun my/apply-opacity ()
-;;   "Apply opacity to all current and future frames."
-;;   (modify-all-frames-parameters `((alpha . ,my/frame-opacity))))
-
-;; (add-hook 'doom-init-ui-hook #'my/apply-opacity)
-;; (add-hook 'server-after-make-frame-hook #'my/apply-opacity)
-
-;; (defun my/toggle-transparency ()
-;;   "Toggle between 100% and 90% opacity."
-;;   (interactive)
-;;   (setq my/frame-opacity (if (= my/frame-opacity 100) 90 100))
-;;   (my/apply-opacity)
-;;   (message "Opacity: %d%%" my/frame-opacity))
-
-;; (defun my/set-opacity (value)
-;;   "Set opacity to VALUE (0-100)."
-;;   (interactive "nOpacity (0-100): ")
-;;   (setq my/frame-opacity (max 0 (min 100 value)))
-;;   (my/apply-opacity)
-;;   (message "Opacity set to %d%%" my/frame-opacity))
-
-;; (global-set-key (kbd "C-c t") #'my/toggle-transparency)
-
-;; ;; ================================================================
-
-
+;;;;;;;;;;;;;;;;;;;;;
+;; Package Configs ;;
+;;;;;;;;;;;;;;;;;;;;;
 ;; =============== Package Configs ============================
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
@@ -336,295 +328,208 @@ The first non-blank line inside the drawer is used as the header."
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-;; outlines searchable comments in the code, for the modus themes and specific to light/dark theme
-(after! hl-todo
-  (defun my-hl-todo-set-keyword-faces (&rest _)
-    (setq hl-todo-keyword-faces
-          (if (member (car custom-enabled-themes) '(modus-operandi modus-operandi-tinted))
-              ;; Light themes
-              `(("TODO" . ,(modus-themes-get-color-value 'red-intense))
-                ("FIXME" . ,(modus-themes-get-color-value 'red-intense))
-                ("HACK" . ,(modus-themes-get-color-value 'yellow-intense))
-                ("BUG" . ,(modus-themes-get-color-value 'red-intense))
-                ("XXX" . ,(modus-themes-get-color-value 'magenta-intense))
-                ("STUB" . ,(modus-themes-get-color-value 'blue-intense))
-                ("NOTE" . ,(modus-themes-get-color-value 'blue-cooler))
-                ("REVIEW" . ,(modus-themes-get-color-value 'yellow-intense))
-                ("OPTIMIZE" . ,(modus-themes-get-color-value 'green-intense))
-                ("DEPRECATED" . ,(modus-themes-get-color-value 'cyan-intense))
-                ("TEMP" . ,(modus-themes-get-color-value 'yellow-faint))
-                ("HOLD" . ,(modus-themes-get-color-value 'fg-faint))
-                ("DONE" . ,(modus-themes-get-color-value 'green-cooler)))
-            ;; Dark themes
-            `(("TODO" . ,(modus-themes-get-color-value 'red-intense))
-              ("FIXME" . ,(modus-themes-get-color-value 'red-intense))
-              ("HACK" . ,(modus-themes-get-color-value 'yellow-intense))
-              ("BUG" . ,(modus-themes-get-color-value 'red-intense))
-              ("XXX" . ,(modus-themes-get-color-value 'magenta-intense))
-              ("STUB" . ,(modus-themes-get-color-value 'blue-intense))
-              ("NOTE" . ,(modus-themes-get-color-value 'blue-cooler))
-              ("REVIEW" . ,(modus-themes-get-color-value 'yellow-intense))
-              ("OPTIMIZE" . ,(modus-themes-get-color-value 'green-intense))
-              ("DEPRECATED" . ,(modus-themes-get-color-value 'cyan-intense))
-              ("TEMP" . ,(modus-themes-get-color-value 'yellow-faint))
-              ("HOLD" . ,(modus-themes-get-color-value 'fg-faint))
-              ("DONE" . ,(modus-themes-get-color-value 'green-cooler)))))
-    (font-lock-flush)
-    (font-lock-ensure))
-  (add-hook 'modus-themes-after-load-theme-hook #'my-hl-todo-set-keyword-faces))
-
-(setq ispell-program-name "aspell")
-(setq ispell-dictionary "en_GB")
-(setq ispell-local-dictionary "en_GB")
+;; =============== Spelling & Dictionaries ============================
+(defconst my/ispell-dictionary "en_GB"
+  "Default dictionary for ispell/aspell.")
 
 
-(blink-cursor-mode 1)             ;; Enable cursor blinking
-(setq blink-cursor-blinks 0)      ;; Blink forever while idle
-(setq blink-cursor-interval 0.5)  ;; Blink interval (in seconds, can adjust)
+(after! flyspell
+  (when (executable-find "aspell")
+    (setq ispell-program-name "aspell"
+          ispell-dictionary my/ispell-dictionary
+          ispell-local-dictionary my/ispell-dictionary)))
 
-;; For Modus Operandi (light)
-(setq modus-operandi-palette-overrides
-      '((cursor "#228B22")))    ;; Forest green
+;; (when (executable-find "aspell")
+;;   (setq ispell-program-name "aspell"
+;;         ispell-dictionary my/ispell-dictionary
+;;         ispell-local-dictionary my/ispell-dictionary))
 
-;; For Modus Vivendi (dark)
-(setq modus-vivendi-palette-overrides
-      '((cursor "#00FF00")))    ;; Bright green
 
+;; =============== magit ============================
+;; (after! magit
+;;   (setq magit-git-editor nil
+;;         magit-revision-show-gravatars '("^Author: t" . "^Commit: t")
+;;         magit-diff-refine-hunk 'all
+;;         ;; Show word-diff in diffs (great for reviewing changes within lines)
+;;         magit-diff-options '("--word-diff")
+;;         magit-refresh-status-buffer 'auto)  ;; refresh when visible
+;;   ;; ===== ENHANCEMENTS =====
+;;   magit-save-repository-buffers 'dontask  ;; auto-save before magit ops
+;;   magit-display-buffer-function           ;; reuse existing window
+;;   #'magit-display-buffer-same-window-except-diff-v1
+;;   magit-log-arguments '("-n256" "--graph" "--decorate" "--color")
+;;   magit-status-headers-hook               ;; faster status buffer
+;;   (remove 'magit-insert-tags-header magit-status-headers-hook))
 
 (after! magit
-  (setq magit-git-editor nil)
-  (setq magit-revision-show-gravatars '("^Author: t" . "^Commit: t"))
-  (setq magit-diff-refine-hunk 'all)
-  ;; Show word-diff in diffs (great for reviewing changes within lines)
-  (setq magit-diff-options '("--word-diff"))
-  ;; Automatically refresh status buffer after performing actions
-  (setq magit-refresh-status-buffer nil)
-  )
+  ;; ===== Main settings =====
+  (setq magit-git-editor nil
+        magit-revision-show-gravatars '("^Author: t" . "^Commit: t")
+        magit-diff-refine-hunk 'all
+        magit-diff-options '("--word-diff")
+        magit-refresh-status-buffer 'auto
+        magit-save-repository-buffers 'dontask
+        magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
 
-(use-package magit-todos
+  ;; ===== Hook customization (separate from setq) =====
+  (remove-hook 'magit-status-headers-hook #'magit-insert-tags-header))
+
+
+(use-package! magit-todos
   :after magit
   :config (magit-todos-mode 1)
   )
 
-;; (use-package! latex-preview-pane)
-;; (latex-preview-pane-enable)
 
-;;(use-package blamer
-;;  :bind (("s-i" . blamer-show-commit-info))
-;;  :defer 20
-;;  :custom
-;;  (blamer-idle-time 0.3)
-;;  (blamer-min-offset 20)
-;;  :custom-face
-;;  (blamer-face
-;;   ;; Use `modus-themes-with-colors` to get palette-dependent foreground color
+;; =============== blamer ============================
+;; (defun my/blamer-face-modus-theme ()
 ;;   (modus-themes-with-colors
-;;     (let ((fg (if (eq (car custom-enabled-themes) 'modus-operandi)
-;;                   modus-themes-blue-alt   ;; light theme blue
-;;                 modus-themes-magenta-alt))) ;; dark theme magenta
-;;       `((t :foreground ,fg
-;;          :background nil
-;;          :height 140
-;;          :italic t)))))
-;;  :config
-;;  (global-blamer-mode 0))
+;;     (let* ((theme (car custom-enabled-themes))
+;;            (fg (cond
+;;                 ((memq theme '(modus-operandi modus-operandi-tinted modus-operandi-deuteranopia))
+;;                  magenta-cooler)  ;; light theme color
+;;                 ((memq theme '(modus-vivendi modus-vivendi-tinted modus-vivendi-deuteranopia))
+;;                  magenta)         ;; dark theme color
+;;                 (t magenta))))     ;; fallback
+;;       (custom-set-faces
+;;        `(blamer-face ((,c :foreground ,fg
+;;                           :background nil
+;;                           :height 140
+;;                           :italic t)))))))
 
-(defun my/blamer-face-modus-theme ()
-  (modus-themes-with-colors
-    (let* ((theme (car custom-enabled-themes))
-           (fg (cond
-                ((memq theme '(modus-operandi modus-operandi-tinted modus-operandi-deuteranopia))
-                 magenta-cooler)  ;; light theme color
-                ((memq theme '(modus-vivendi modus-vivendi-tinted modus-vivendi-deuteranopia))
-                 magenta)         ;; dark theme color
-                (t magenta))))     ;; fallback
-      (custom-set-faces
-       `(blamer-face ((,c :foreground ,fg
-                          :background nil
-                          :height 140
-                          :italic t)))))))
+;; (add-hook 'modus-themes-after-load-theme-hook #'my/blamer-face-modus-theme)
 
-(add-hook 'modus-themes-after-load-theme-hook #'my/blamer-face-modus-theme)
-
-(use-package blamer
+(use-package! blamer
   :bind (("s-i" . blamer-show-commit-info))
   :defer 20
   :custom
   (blamer-idle-time 0.3)
   (blamer-min-offset 20)
   :config
-  (global-blamer-mode 0)
-  ;; Apply face once initially
-  (my/blamer-face-modus-theme))
+  (global-blamer-mode 0))
+;; Apply face once initially
+;; (my/blamer-face-modus-theme))
 
 
+;; =============== ox-hugo:blogging system ============================
 
 ;; ox-hugo configurations
-(use-package ox-hugo
-  :ensure t   ;Auto-install the package from Melpa
-  ;; :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
-  :after ox)
-
-
-                                        ; my usual places;
-
-
-;; auto theme-switching based on system by hooking onto system events:
-(defun my/apply-theme (appearance)
-  "Load theme, taking current system APPEARANCE into consideration."
-  (mapc #'disable-theme custom-enabled-themes)
-  (pcase appearance
-    ('light (load-theme 'modus-operandi-tinted t))
-    ('dark (load-theme 'modus-vivendi t))))
-
-(add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
-
-;; Set cursor color to bright green for all Modus themes
-(after! modus-themes
-  (set-cursor-color "#00FF00")) ;; Bright green hex code
-
-;; Enable blinking cursor
-(blink-cursor-mode 1)
-
-;; Optionally adjust blink timing (in seconds)
-(setq blink-cursor-interval 0.5) ;; half a second
-
-;; DOOM Modeline configs
-(setq doom-modeline-height 28) ; Set minimum height
-
-(custom-set-faces!
-  '(mode-line :family "Fira Code" :height 0.9)
-  '(mode-line-inactive :family "Fira Code" :height 0.8))
-
-;;(add-hook! 'doom-modeline-mode-hook
-;;  (let ((char-table char-width-table))
-;;    (while (setq char-table (char-table-parent char-table)))
-;;    (dolist (pair doom-modeline-rhs-icons-alist)
-;;      (let ((width 2)  ; <-- tweak this
-;;            (chars (cdr pair))
-;;            (table (make-char-table nil)))
-;;        (dolist (char chars)
-;;          (set-char-table-range table char width))
-;;        (optimize-char-table table)
-;;        (set-char-table-parent table char-table)
-;;        (setq char-width-table table)))))
-
-(use-package ob-mermaid
-  :after org
+(use-package! ox-hugo
+  :after ox
   :config
-  (setq ob-mermaid-cli-path "/Users/rtshkmr/.nvm/versions/node/v23.3.0/bin/mmdc"))  ; Adjust path as needed
-
-;; Org Babel Explicit Whitelist:
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((mermaid . t)
-   (python . t)
-   (ocaml . t)))
+  (add-to-list 'org-hugo-special-block-type-properties
+               '("mermaid" . (:raw t))))
 
 
-;; extensions to org noter:
-;; (use-package! org-noter
-;;   :after (:any org pdf-view)
-;;   :config
-;;   ;; Your org-noter config here
-;;   (require 'org-noter-pdftools)
-
-;;   )
-
-;; (use-package! org-pdftools
-;;   :after org
-;;   :hook (org-mode . org-pdftools-setup-link))
-
-;; (use-package! org-noter-pdftools
-;;   :after org-noter
-;;   :config
-;;   (with-eval-after-load 'pdf-annot
-;;     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
-
-(use-package! pdf-tools
-  :defer t)
-
-(use-package! org-noter
-  :after org
-  :defer t)
-
-;; (use-package! org-noter-pdftools
-;;   :after (org-noter pdf-tools)
-;;   :config
-;; Only activate AFTER epdfinfo exists
-;;   (when (and (boundp 'pdf-info-epdfinfo-program)
-;;              pdf-info-epdfinfo-program
-;;              (file-executable-p pdf-info-epdfinfo-program))
-;;     (org-noter-pdftools-mode 1)))
-
-
-
-(require 'toc-org)
-(add-hook 'org-mode-hook 'toc-org-mode)
-
-
-(elfeed-org)
-(setq rmh-elfeed-org-files (list "~/org/rss/elfeed.org"))
+;; =============== projectile: project management ============================
 
 (after! projectile
   (setq projectile-project-root-files-bottom-up
-        (remove ".git" projectile-project-root-files-bottom-up))
-  (setq projectile-auto-discover nil)
-  )
+        (remove ".git" projectile-project-root-files-bottom-up)
+        projectile-auto-discover nil
+        projectile-indexing-method 'alien       ;; use external tools (fd/rg)
+        projectile-sort-order 'recentf          ;; most recent files first
+        projectile-enable-caching t))           ;; cache project files
 
-;; === special ocaml setup:
-(let ((opam-share (ignore-errors (car (process-lines "opam" "var" "share")))))
-  (when (and opam-share (file-directory-p opam-share))
-    ;; Register Merlin
-    (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
-    (autoload 'merlin-mode "merlin" nil t nil)
-    ;; Automatically start it in OCaml buffers
-    (add-hook 'tuareg-mode-hook 'merlin-mode t)
-    (add-hook 'caml-mode-hook 'merlin-mode t)
 
-    ))
-;; Use opam switch to lookup ocamlmerlin binary
-(setq merlin-command 'opam)
+;; =============== elfeed: rss feed ============================
+;; elfeed: defer to when elfeed loads
+(after! elfeed
+  (elfeed-org)
+  (setq rmh-elfeed-org-files (list "~/org/rss/elfeed.org")
+        ;; ===== ENHANCEMENTS =====
+        elfeed-search-filter "@1-week-ago +unread"  ;; default filter
+        elfeed-db-directory                          ;; persist DB
+        (expand-file-name "elfeed" doom-data-dir)))
+;; =============== TRAMP ============================
+(after! tramp
+  ;; TRAMP performance improvements:
+  (connection-local-set-profile-variables
+   'remote-direct-async-process
+   '((tramp-direct-async-process . t)))
 
+  (connection-local-set-profiles
+   '(:application tramp :protocol "ssh")
+   'remote-direct-async-process)
+
+  (setq tramp-default-method "ssh"
+        tramp-verbose 1                         ;; reduce logging overhead
+        tramp-auto-save-directory                ;; don't auto-save remotely
+        (expand-file-name "tramp-autosave" doom-cache-dir)
+        remote-file-name-inhibit-cache nil       ;; don't expire cache
+        tramp-use-ssh-controlmaster-options nil)) ;; let ~/.ssh/config handle it
+
+;; =============== nov.el: epub reading ============================
+(use-package! nov
+  :mode ("\\.epub\\'" . nov-mode)
+  :config
+  (setq nov-text-width t)  ;; use window width
+  (add-hook 'nov-mode-hook
+            (lambda ()
+              (face-remap-add-relative
+               'variable-pitch :family "Literata" :height 1.2)
+              (visual-line-mode 1)
+              (mixed-pitch-mode 1))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Language-specific Configs ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; =============== OCaml ============================
+
+(after! tuareg
+  (let ((opam-share (ignore-errors (car (process-lines "opam" "var" "share")))))
+    (when (and opam-share (file-directory-p opam-share))
+      ;; Registers Merlin
+      (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
+      ;; auto-starts merlin in OCaml buffers
+      (autoload 'merlin-mode "merlin" nil t nil)
+      (add-hook 'tuareg-mode-hook 'merlin-mode t)
+      (add-hook 'caml-mode-hook 'merlin-mode t)
+      ;; Use opam switch to lookup ocamlmerlin binary
+      (setq merlin-command 'opam)
+      ;; To easily change opam switches within a given Emacs session, you can
+      ;; install the minor mode https://github.com/ProofGeneral/opam-switch-mode
+      ;; and use one of its "OPSW" menus.
+      )))
+
+;; <commented out because I don't want it to hardcode the default switch path>
 ;;----- ocp-indent
-(add-to-list 'load-path "/Users/rtshkmr/.opam/default/share/emacs/site-lisp")
-(require 'ocp-indent)
+;; (add-to-list 'load-path "/Users/rtshkmr/.opam/default/share/emacs/site-lisp")
+;; (require 'ocp-indent)
 
-(setq spacious-padding-widths
-      '( :internal-border-width 15
-         :header-line-width 4
-         :mode-line-width 6
-         :tab-width 4
-         :right-divider-width 30
-         :scroll-bar-width 8))
-(spacious-padding-mode 1)
+;;;;;;;;;;;;;;;;;;;
+;; LLM-workflows ;;
+;;;;;;;;;;;;;;;;;;;
 
+;; =============== key-management: ============================
+;; Helper function for Mistral API key (consistent with Claude)
+(defun my/get-claude-api-key ()
+  (auth-source-pick-first-password :host "anthropic.com" :user "apikey"))
 
-;; %%%% TRAMP improvements %%%%%%
-(connection-local-set-profile-variables
- 'remote-direct-async-process
- '((tramp-direct-async-process . t)))
+(defun my/get-mistral-api-key ()
+  (auth-source-pick-first-password :host "api.mistral.ai" :user "apikey"))
 
-(connection-local-set-profiles
- '(:application tramp :protocol "ssh")
- 'remote-direct-async-process)
+;; =============== gptel config ============================
+(use-package! gptel
+  :config
+  ;; Claude/Anthropic backend
+  (gptel-make-anthropic "Claude"
+    :stream t
+    :key #'my/get-claude-api-key)
 
-
-;; %%%%-------------------- LLM Configs ------------------------ %%%%%%
-;; Mistral offers an OpenAI compatible API
-(gptel-make-openai "MistralLeChat"  ;Any name you want
-  :host "api.mistral.ai"
-  :endpoint "/v1/chat/completions"
-  :protocol "https"
-  :key <KEY>               ;can be a function that returns the key
-  :models '("mistral-small"))
-
-;; OPTIONAL configuration
-(setq gptel-model   'mistral-small
-      gptel-backend
-      (gptel-make-openai "MistralLeChat"  ;Any name you want
-        :host "api.mistral.ai"
-        :endpoint "/v1/chat/completions"
-        :protocol "https"
-        :key <KEY>               ;can be a function that returns the key
-        :models '("mistral-small")))
+  ;; Mistral backend (set as default)
+  (setq gptel-backend
+        (gptel-make-openai "MistralLeChat"
+          :host "api.mistral.ai"
+          :endpoint "/v1/chat/completions"
+          :protocol "https"
+          :key #'my/get-mistral-api-key
+          :models '("mistral-small"))
+        gptel-model 'mistral-small)
+  ;; Quick keybindings
+  (map! :leader
+        "l l" #'gptel-send        ;; send region/buffer to LLM
+        "l m" #'gptel-menu        ;; open gptel menu
+        "l c" #'gptel             ;; open chat buffer
+        "l r" #'gptel-rewrite))   ;; rewrite region with LLM
