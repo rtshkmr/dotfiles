@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: inline-sidenote
+# uuid: 4a31fc01-b1d5-4988-9720-f10ac64f9905
+# key: is
+# condition: t
+# --
+@@hugo:{{% inline-sidenote "${1:normal content}"%}}@@${2:Sidenote content}@@hugo:{{% /inline-sidenote %}}@@

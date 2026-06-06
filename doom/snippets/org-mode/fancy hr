@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: fancy hr
+# uuid:7d33f7a4-dbbb-47f3-a345-a9a813daedc6
+# key: fancyheader
+# condition: t
+# --
+
+@@html:<hr class="fancy-hr">@@

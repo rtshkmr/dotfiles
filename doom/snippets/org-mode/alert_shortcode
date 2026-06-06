@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: alert shortcode
+# uuid:
+# key: alert_shortcode
+# condition: t
+# --
+
+#+attr_shortcode: ${1:icon name}
+#+begin_alert
+${2:alert content}
+#+end_alert

@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: HTML details
+# uuid: b4ac0e74-8e50-4638-8a17-8efe5b2a9555
+# key: htmld
+# condition: t
+# --
+
+#+begin_details
+#+begin_summary
+${1:summary}
+#+end_summary
+${2:details}
+#+end_details
