@@ -38,8 +38,8 @@
        :ui
        ;;deft              ; notational velocity for Emacs
        doom              ; what makes DOOM look the way it does
-       doom-dashboard    ; a nifty splash screen for Emacs
-       ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
+       dashboard    ; a nifty splash screen for Emacs
+       doom-quit         ; DOOM quit-message prompts when you quit Emacs
        (emoji
         +ascii
         +github
@@ -101,11 +101,15 @@
        undo              ; persistent, smarter undo for your inevitable mistakes
        vc                ; version-control and Emacs, sitting in a tree
 
+
        :term
        ;;eshell            ; the elisp shell that works everywhere
        ;;shell             ; simple shell REPL for Emacs
        ;;term              ; basic terminal emulator for Emacs
-       vterm             ; the best terminal emulation in Emacs
+       ;; vterm             ; almost the best terminal emulation in Emacs
+       (ghostel           ; the best terminal emulation in Emacs
+        +everywhere
+        )
 
        :checkers
        (syntax              ; tasing you for every semicolon you forget
@@ -159,12 +163,12 @@
        tty               ; improve the terminal Emacs experience
 
        :lang
-       ;;agda              ; types of types of types of types...
+       ;;ada               ; In strong typing we (blindly) trust
+       ;;(agda +local)     ; types of types of types of types...
        ;;beancount         ; mind the GAAP
        (cc
-        +lsp
-        +tree-sitter
-        )         ; C > C++ == 1
+        +lsp +tree-sitter
+        )                  ; C > C++ == 1
        ;;clojure           ; java with a lisp
        ;;common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
@@ -190,9 +194,11 @@
        ;;fsharp            ; ML stands for Microsoft's Language
        ;;fstar             ; (dependent) types and (monadic) effects and Z3
        ;;gdscript          ; the language you waited for
-       (go +lsp +tree-sitter
-           )         ; the hipster dialect
-       (graphql +lsp)    ; Give queries a REST
+       (go
+        +lsp
+        +tree-sitter
+        )                  ; the hipster dialect
+       (graphql +lsp)      ; Give queries a REST
        ;;(haskell +lsp)    ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ; a language you can depend on
@@ -200,6 +206,7 @@
         +tree-sitter
         +lsp
         )
+       ;;janet             ; Fun fact: Janet is me!
        (java
         +tree-sitter
         +lsp)       ; the poster child for carpal tunnel syndrome
@@ -210,7 +217,6 @@
        ;;julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        (latex             ; writing papers in Emacs has never been so fun
-        ;; +cdlatex
         +fold
         +lsp
         )
@@ -219,28 +225,28 @@
        ;;lua               ; one-based indices? one-based indices
        (markdown          ; writing docs for people to ignore
         +grip
+        +lsp
+        +tree-sitter
         )
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        (ocaml             ; an objective camel
         +lsp
         )
-
+       ;;odin              ; C, minus its footguns
        (org               ; organize your plain life in plain text
-        ;; +contacts
         +dragndrop
+        +crypt
         +gnuplot
-        +hugo
         +jupyter
         +noter
         +pandoc
-        +pomodoro
         +present
         +pretty
         )
        ;;php               ; perl's insecure younger brother
-       plantuml          ; diagrams for confusing people more
-       graphviz          ; diagrams for confusing yourself even more
+       ;;plantuml          ; diagrams for confusing people more
+       ;;graphviz          ; diagrams for confusing yourself even more
        ;;purescript        ; javascript, but functional
        (python            ; beautiful is better than ugly
         +uv
@@ -250,7 +256,7 @@
         +pyright
         +tree-sitter
         )
-       ( qt +lsp +tree-sitter )                ; the 'cutest' gui framework ever
+       ;;qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6
        (rest              ; Emacs as a REST client
@@ -259,6 +265,7 @@
        rst               ; ReST in peace
        ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        ;;(rust +lsp)       ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
+       ;;scad              ; trust the preview, regret the render
        ;;scala             ; java, but good
        ;;(scheme +guile)   ; a fully conniving family of lisps
        (sh                ; she sells {ba,z,fi}sh shells on the C xor
@@ -277,7 +284,10 @@
         +lsp
         +tree-sitter
         )
-       ;;zig               ; C, but simpler
+       (zig               ; C, but simpler
+        +lsp
+        +tree-sitter
+        )
 
        :email
        ;;(mu4e +org +gmail)
