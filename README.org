@@ -4,20 +4,23 @@
 ** Current Doom Info
 
 #+begin_quote
-generated  Jun 07, 2026 02:03:39
+generated  Jul 07, 2026 22:13:45
 system     MacOS 26.5.1 Darwin 25.5.0 arm64
 emacs      30.2 EMACSDIR=~/.config/emacs/
 	   EMACS=/Applications/Emacs.app/Contents/MacOS/Emacs
-doom       3.0.0-pre PROFILE=_default@0 HEAD -> master d23bbe877
-	   2026-03-04 04:06:58 -0500 ~/.config/doom/
+doom       2.2.0 PROFILE=_default@0 HEAD -> master 8e4fbbae0 2026-07-03
+	   11:53:17 -0400 ~/.config/doom/
 shell      /bin/zsh
-features   ACL DBUS GIF GLIB GMP GNUTLS JPEG LCMS2 LIBXML2 MODULES
+features   ACL GIF GLIB GMP GNUTLS JPEG LCMS2 LIBXML2 MODULES
 	   NATIVE_COMP NOTIFY KQUEUE NS PDUMPER PNG RSVG SQLITE3 THREADS
-	   TIFF TOOLKIT_SCROLL_BARS TREE_SITTER WEBP XIM XWIDGETS ZLIB
-traits     batch server-running envvar-file custom-file
-modules    :config use-package :completion (corfu +icons +dabbrev
-	   +orderless) (vertico +childframe +icons) :ui doom
-	   doom-dashboard (emoji +ascii +github +unicode) hl-todo
+	   TIFF TOOLKIT_SCROLL_BARS TREE_SITTER WEBP XIM ZLIB
+traits     batch server-running
+sources    (doomemacs/modules . HEAD, tag: v26.07 7a3c5a14e 2026-07-01
+	   14:40:00 -0400)
+modules    :doom (compat +use-package +keybinds +better-jumper
+	   +projectile +smartparens) :completion (corfu +icons +dabbrev
+	   +orderless) (vertico +childframe +icons) :ui doom dashboard
+	   doom-quit (emoji +ascii +github +unicode) hl-todo
 	   indent-guides (ligatures +extra) minimap modeline nav-flash
 	   ophints (popup +defaults) (smooth-scroll +interpolate)
 	   (treemacs +lsp) unicode (vc-gutter +pretty) vi-tilde-fringe
@@ -25,21 +28,21 @@ modules    :config use-package :completion (corfu +icons +dabbrev
 	   +writeroom-mode) :editor (evil +everywhere) file-templates
 	   fold (format +onsave) rotate-text snippets (whitespace +guess
 	   +trim) word-wrap :emacs (dired +dirvish +icons) electric eww
-	   (ibuffer +icons) tramp undo vc :term vterm :checkers (syntax
-	   +childframe +flymake +icons) (spell +flyspell +enchant
-	   +everywhere) grammar :tools (debugger +lsp) direnv docker
-	   editorconfig ein (eval +overlay) (lookup +dictionary +offline
-	   +docsets) llm (lsp +peek) (magit +forge) make pdf tmux
-	   tree-sitter :os macos tty :lang (cc +lsp +tree-sitter) data
-	   (elixir +tree-sitter +lsp) emacs-lisp (erlang +lsp
-	   +tree-sitter) (go +lsp +tree-sitter) (graphql +lsp) (json
-	   +tree-sitter +lsp) (java +tree-sitter +lsp) (javascript +lsp
-	   +tree-sitter) (latex +fold +lsp) (markdown +grip) (ocaml
-	   +lsp) (org +dragndrop +gnuplot +hugo +jupyter +noter +pandoc
-	   +pomodoro +present +pretty) plantuml graphviz (python +uv
-	   +cython +lsp +poetry +pyright +tree-sitter) (qt +lsp
-	   +tree-sitter) (rest +jq) rst (sh +lsp +tree-sitter) (web +lsp
-	   +tree-sitter) (yaml +lsp +tree-sitter) :app calendar
+	   (ibuffer +icons) tramp undo vc :term (ghostel +everywhere)
+	   :checkers (syntax +childframe +flymake +icons) (spell
+	   +flyspell +enchant +everywhere) grammar :tools (debugger
+	   +lsp) direnv docker editorconfig ein (eval +overlay) (lookup
+	   +dictionary +offline +docsets) llm (lsp +peek) (magit +forge)
+	   make pdf tmux tree-sitter :os macos tty :lang (cc +lsp
+	   +tree-sitter) data (elixir +tree-sitter +lsp) emacs-lisp
+	   (erlang +lsp +tree-sitter) (go +lsp +tree-sitter) (graphql
+	   +lsp) (json +tree-sitter +lsp) (java +tree-sitter +lsp)
+	   (javascript +lsp +tree-sitter) (latex +fold +lsp) (markdown
+	   +grip +lsp +tree-sitter) (ocaml +lsp) (org +dragndrop +crypt
+	   +gnuplot +jupyter +noter +pandoc +present +pretty) (python
+	   +uv +cython +lsp +poetry +pyright +tree-sitter) (rest +jq)
+	   rst (sh +lsp +tree-sitter) (web +lsp +tree-sitter) (yaml +lsp
+	   +tree-sitter) (zig +lsp +tree-sitter) :app calendar
 	   everywhere (rss +org +youtube) :config (default +gnupg
 	   +bindings +smartparens)
 packages   (nov) (blamer) (magit-todos) (ob-mermaid) (org-modern)
@@ -47,7 +50,6 @@ packages   (nov) (blamer) (magit-todos) (ob-mermaid) (org-modern)
 	   github :repo fuxialexander/org-pdftools)) (org-noter-pdftools
 	   :recipe (:host github :repo fuxialexander/org-pdftools :files
 	   (org-noter-pdftools.el)))
-elpa       djvu
 #+end_quote
 
 To enjoy the performance benefits of emacs 30, as well as to avoid some bugs and enjoy more modus themes, I've moved away from using the railwaycat port and am using the emacsplus port of emacs (for macos).
