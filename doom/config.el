@@ -32,10 +32,17 @@
   "Load theme, taking current system APPEARANCE into consideration."
   (mapc #'disable-theme custom-enabled-themes)
   (pcase appearance
-    ('light (load-theme 'modus-operandi-tinted t))
+    ('light (load-theme 'modus-operandi t))
     ('dark (load-theme 'modus-vivendi t))))
 
 (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
+
+;; ===== Cursor Color Overrides =====
+(setq modus-operandi-palette-overrides
+      '((cursor "#228B22")))    ;; Forest green for light
+
+(setq modus-vivendi-palette-overrides
+      '((cursor "#00FF00")))    ;; Bright green for dark
 
 ;; =============== Fonts ============================
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
@@ -433,14 +440,20 @@
 
 
 ;; =============== elfeed: rss feed ============================
-;; elfeed: defer to when elfeed loads
 (after! elfeed
   (elfeed-org)
   (setq rmh-elfeed-org-files (list "~/org/rss/elfeed.org")
-        ;; ===== ENHANCEMENTS =====
-        elfeed-search-filter "@1-week-ago +unread"  ;; default filter
-        elfeed-db-directory                          ;; persist DB
-        (expand-file-name "elfeed" doom-data-dir)))
+        elfeed-search-filter  "@1-week-ago +unread"
+        elfeed-db-directory   (expand-file-name "elfeed" doom-data-dir))
+  )
+
+(map! :leader
+      (:prefix ("e" . "elfeed")
+       :desc "Open elfeed" "e" #'elfeed
+       :desc "Update elfeed" "u" #'elfeed-update
+       :desc "Export to OPML" "x" #'elfeed-org-export-opml
+       :desc "Import from OPML" "i" #'elfeed-org-import-opml))
+
 ;; =============== TRAMP ============================
 (after! tramp
   ;; TRAMP performance improvements:

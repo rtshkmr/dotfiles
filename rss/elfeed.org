@@ -1,0 +1,98 @@
+#+title: Elfeed
+
+* Imported Feeds   :elfeed:
+** entry-title: \(ocaml\|haskell\|functional\) :fp:
+** entry-title: \(emacs\|org-mode\|doom\)  :emacs:
+** entry-title: \(singapore\|sgd\|mas \|cpf\) :singapore:
+
+** NYT > Home Page   :news:
+*** [[https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml][NYT > Home Page]]
+
+** Singapore News  :news:singapore:
+*** [[http://theonlinecitizen.com/feed][The Online Citizen]]
+*** [[https://www.channelnewsasia.com/rssfeeds/8396082][CNA]]
+*** [[https://www.gov.sg/rss/newsrss][News RSS]]
+*** [[https://www.gov.sg/rss/allfeeds][RSS Feeds]]
+*** [[https://www.asiaone.com/rss-feed/2][Singapore]]
+*** [[https://sbr.com.sg/rss2/news][Singapore Business Review]]
+*** [[https://asiancorrespondent.com/section/countries/singapore/feed][Singapore – Asian Correspondent]]
+*** [[http://theindependent.sg/feed][The Independent Singapore]]
+*** [[https://www.todayonline.com/hot-news/feed][Today Online - Hot news]]
+
+** Global News    :news:
+*** [[https://www.economist.com/briefing/rss.xml][Briefing]]
+*** [[https://feeds.feedburner.com/hacker-news-feed-50?format=xml][Hacker News 50]]
+*** [[https://feeds.reuters.com/reuters/worldNews][Reuters: World News]]
+*** [[https://www.economist.com/the-world-this-week/rss.xml][The world this week]]
+*** [[https://www.reddit.com/r/worldnews.rss][World News]]
+
+** Toronto   :news:toronto:
+*** [[https://feeds.feedburner.com/blogto][blogTO]]
+*** [[https://rss.cbc.ca/lineup/canada.xml][CBC | Canada News]]
+*** [[https://www.torontopolice.on.ca/newsreleases/rss.php][Toronto Police Service - News Releases]]
+*** [[https://torontolife.com/feed/][Toronto Life]]
+*** [[https://weather.gc.ca/rss/battleboard/on61_e.xml][City of Toronto - Weather Alert - Environment Canada]]
+
+** Computing  :tech:
+*** Software Development   :dev:
+**** [[https://notes.eatonphil.com/rss.xml][Notes by a software developer]]
+**** [[https://blog.janestreet.com/feed.xml][Jane Street Tech Blog]]
+**** [[https://blog.cleancoder.com/atom.xml][The Clean Code Blog]]
+**** [[https://martinfowler.com/feed.atom][Martin Fowler]]
+**** [[https://chrisrichardson.net/feed.xml][Chris Richardson Consulting, Inc]]
+**** [[https://alistapart.com/main/feed/][A List Apart: The Full Feed]]
+**** [[https://aphyr.com/posts.atom][Aphyr: Posts]]
+**** [[https://protesilaos.com/codelog.xml][Protesilaos Stavrou Coding Blog]]
+*** General Tech   :general:
+**** [[https://pluralistic.net/feed/][Pluralistic: Daily links from Cory Doctorow]]
+**** [[https://news.ycombinator.com/rss][Hacker News]]
+**** [[https://feeds.feedburner.com/codinghorror?format=xml][Coding Horror]]
+*** Leadership & SaaS :leadership:
+**** [[https://staysaasy.com/feed.xml][Stay SaaSy]]
+*** Deployment & Ops  :devops:
+**** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCNTVzV1InxHV-YR0fSajqPQ][Supabase]]
+
+** Science and Tech   :tech:science:
+*** [[https://www.economist.com/science-and-technology/rss.xml][Science and technology]]
+
+** Commentaries      :opinion:
+*** [[http://www.aeonmagazine.com/feed/][Aeon]]
+*** [[https://www.todayonline.com/feed/commentary][Commentary]]
+*** [[https://www.economist.com/graphic-detail/rss.xml][Graphic detail]]
+*** [[https://www.economist.com/blogs/prospero/index.xml][Prospero]]
+*** [[https://www.economist.com/the-economist-explains/rss.xml][The Economist explains]]
+*** [[https://www.economist.com/blogs/bagehot/atom.xml][economist.com/blogs/bagehot/atom.xml]]
+*** [[http://www.economist.com/blogs/bartleby/atom.xml][economist.com/blogs/bartleby/atom.xml]]
+*** [[https://www.aaronsw.com/2002/feeds/pgessays.rss][Paul Graham: Essays]]
+
+** Photography   :photography:
+*** [[https://feed.500px.com/500px-best][500px:]]
+*** [[http://www.cdags.org/feed/][Contemporary Daguerreotypes]]
+*** [[https://feeds.feedburner.com/DigitalPhotographySchool][Digital Photography School]]
+*** [[https://www.jamesnord.com/rss][HIGHLIGHTED LIFE]]
+*** [[https://lens.blogs.nytimes.com/feed/][Lens]]
+*** [[https://feeds.feedburner.com/PetaPixel][PetaPixel]]
+*** [[https://photographyconcentrate.com/feed/][Photography Concentrate]]
+*** [[http://feeds.feedburner.com/Photojojo][Photojojo]]
+*** [[https://feeds.feedburner.com/shoottokyo][ShootTokyo]]
+*** [[https://feeds.feedburner.com/blogspot/WOBq][Strobist]]
+*** [[https://www.stuckincustoms.com/feed/][Stuck in Customs]]
+*** [[http://feeds.boston.com/boston/bigpicture/index][The Big Picture]]
+*** [[http://tiffinbox.org/feed/][Views, Reviews & Interviews For Photographers On Tiffinbox]]
+*** [[https://theimpossiblecool.tumblr.com/rss][https://theimpossiblecool.tumblr.com/]]
+
+** Cinema  :cinema:
+*** [[https://www.theguardian.com/film/rss][Film | The Guardian]]
+*** [[http://www.newyorker.com/online/blogs/movies/rss.xml][Culture: TV, Movies, Music, Art, and Theatre News and Reviews]]
+*** [[https://feeds.feedburner.com/FilmSchoolRejects][Film School Rejects]]
+*** [[https://www.davidbordwell.net/blog/feed/][Observations on film art]]
+
+** DIY :diy:
+*** [[https://www.ikeahackers.net/feed][IKEA Hackers]]
+
+** Weather  :weather:singapore:
+*** [[http://www.weather.gov.sg/files/rss/rss2HrForecast.xml][2 Hour Forecast]]
+*** [[http://www.weather.gov.sg/files/rss/rss4day.xml][4 Day Forecast]]
+*** [[http://www.weather.gov.sg/files/rss/rss24HrForecast.xml][24 Hour Forecast]]
+*** [[http://www.weather.gov.sg/files/rss/rssHeavyRain_new.xml][Heavy Rain Warning]]
+*** [[https://www.nea.gov.sg/rss/news_update][NEA News]]

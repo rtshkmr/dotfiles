@@ -1,11 +1,11 @@
 # -*- mode: snippet -*-
-# name: alert shortcode
-# uuid:
-# key: alert_shortcode
+# name: Alert shortcode for ox-hugo
+# uuid: c77d3077-6c32-4204-bb36-66dc6279ba14
+# key: <alert
 # condition: t
 # --
 
-#+attr_shortcode: ${1:icon name}
+#+attr_shortcode: ${1:circle-info}
 #+begin_alert
 ${2:alert content}
 #+end_alert

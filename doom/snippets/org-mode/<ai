@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: AI Usage Disclosure for Hugo
+# uuid: ba13c2f4-28c6-40dc-81c7-833fb02f2daf
+# key: <ai
+# condition: t
+# --
+
+#+attr_shortcode: :tool ${1:Claude Sonnet 4.6} :role ${2:rubber ducking}
+#+begin_ai-disclosure
+${3:disclosure details}
+#+end_ai-disclosure
