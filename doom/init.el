@@ -31,7 +31,7 @@
        ;;ido               ; the other *other* search engine...
        ;;ivy               ; a search engine for love and life
        (vertico
-        +childframe
+        ;; +childframe
         +icons
         )                  ;the search engine of the future
 
@@ -54,7 +54,7 @@
        nav-flash         ; blink cursor line after big motions
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
-       (popup +defaults)   ; tame sudden yet inevitable temporary windows
+       (popup +all +defaults)   ; tame sudden yet inevitable temporary windows
        ( smooth-scroll +interpolate )     ; So smooth you won't believe it's not butter
        ;; tabs              ; a tab bar for Emacs
        (treemacs
@@ -106,10 +106,10 @@
        ;;eshell            ; the elisp shell that works everywhere
        ;;shell             ; simple shell REPL for Emacs
        ;;term              ; basic terminal emulator for Emacs
-       ;; vterm             ; almost the best terminal emulation in Emacs
-       (ghostel           ; the best terminal emulation in Emacs
-        +everywhere
-        )
+       vterm             ; almost the best terminal emulation in Emacs
+       ;; (ghostel           ; the best terminal emulation in Emacs
+       ;;  +everywhere
+       ;;  )
 
        :checkers
        (syntax              ; tasing you for every semicolon you forget
@@ -298,7 +298,7 @@
        calendar
        ;;emm
        everywhere        ; *leave* Emacs!? You must be joking
-       ;;irc               ; how neckbeards socialize
+       irc               ; how neckbeards socialize
        (rss
         +org
         +youtube
