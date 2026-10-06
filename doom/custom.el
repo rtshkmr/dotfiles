@@ -4,11 +4,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(org-agenda-files
-   '("/Users/rtshkmr/org/future_vyapari/training.org"
-     "/Users/rtshkmr/Projects/paxos_ocaml_demo/docs/planning.org"
-     "/Users/rtshkmr/org/future_vyapari/interviews/application_log.org"
+   '(
+     "/Users/rtshkmr/org/projects/oss/cpython/cpython.org"
+     "/Users/rtshkmr/org/projects/oss/pg/postgres.org"
+     "/Users/rtshkmr/org/future_vyapari/training.org"
      "/Users/rtshkmr/org/future_vyapari/algos/canonicals.org"
-     "/Users/rtshkmr/org/future_vyapari/algos/algos.org"
      "/Users/rtshkmr/org/journal.org" "/Users/rtshkmr/org/learning.org"
      "/Users/rtshkmr/org/notes.org" "/Users/rtshkmr/org/projects.org"
      "/Users/rtshkmr/org/reading.org" "/Users/rtshkmr/org/ref.org"
@@ -20,7 +20,8 @@
    '("/Users/rtshkmr/Projects/resume/resume/" "/Users/rtshkmr/.config/doom/"
      "~/.config/emacs/"))
  '(safe-local-variable-values
-   '((eval setq-local TeX-output-dir "build")
+   '((eval add-to-list 'auto-mode-alist '("\\.gs\\'" . js-mode))
+     (eval setq-local TeX-output-dir "build")
      (eval setq-local TeX-command-extra-options "-outdir=build")
      (checkdoc-package-keywords-flag))))
 (custom-set-faces

@@ -1,0 +1,8 @@
+#+title: Readme
+
+
+Some helper scripts when working with the PostgreSQL codebase.
+
+Transfer this to =<repo root>/scripts/*.sh= and call from the repo root for it to work smoothly.
+
+Applies to MacOS X as the primary development platform, YMMV for other platforms.

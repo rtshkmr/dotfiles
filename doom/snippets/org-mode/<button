@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: button
+# uuid: 62acc8be-ea50-4d42-95cc-f6096f8f3b2e
+# key: <button
+# condition: t
+# --
+
+#+html: <div class="text-center p-8 mb-8 mt-8">
+#+attr_shortcode: :href ${1:reference} :target _self
+#+begin_button
+${2:button label}
+#+end_button
+#+html: </div>

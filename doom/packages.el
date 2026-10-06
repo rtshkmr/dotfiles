@@ -49,6 +49,7 @@
 ;; (unpin! t)
 
 ;;(package! git-commit :pin "0b4d3a2e3f7a3b0bd0738c1c7f0b2f26a5a0ed02")
+;; (package! let-completion :disable t)
 (package! nov)
 (package! blamer)
 (package! magit-todos)
@@ -56,9 +57,13 @@
 (package! org-modern)
 (package! toc-org)
 (package! spacious-padding)
+(package! ox-hugo)
 
 ;; using org-noter extension: https://github.com/fuxialexander/org-pdftools
 (package! org-pdftools
   :recipe (:host github :repo "fuxialexander/org-pdftools"))
 (package! org-noter-pdftools
   :recipe (:host github :repo "fuxialexander/org-pdftools" :files ("org-noter-pdftools.el")))
+
+;;pi-agent harness frontend:
+(package! pilish)
