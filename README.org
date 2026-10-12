@@ -1,6 +1,9 @@
 # dotfiles
 * Dotfiles
-** Current Doom Info
+I run 2 systems: macos and arch
+
+** macos
+*** doom info
 
 #+begin_quote
 generated  Oct 06, 2026 19:42:00
@@ -55,6 +58,55 @@ To enjoy the performance benefits of emacs 30, as well as to avoid some bugs and
 
 Refer to [[https://github.com/d12frosted/homebrew-emacs-plus?tab=readme-ov-file#install][this README for emacsplus port]].
 
-** MacOS Specific
+*** MacOS Specific
 - see the emacsplus repo on how to setup the launchers
 - also on how to setup emacsclient, helps make the loading of frames fast because there's a daemon at the back.
+
+** arch
+*** doom info
+#+begin_src txt
+generated  Oct 12, 2026 08:47:18
+system     Arch Linux Linux 7.2.9-arch1-1 x86_64
+emacs      31.1 EMACSDIR=~/.config/emacs/ EMACS=/usr/bin/emacs
+doom       2.1.0 PROFILE=_default@0 grafted, HEAD -> master,
+	   origin/master, origin/HEAD cc6c98c94 2026-05-12 18:55:10
+	   -0400 ~/.config/doom/
+shell      /bin/zsh
+features   ACL CAIRO DBUS FREETYPE GIF GLIB GMP GNUTLS GSETTINGS
+	   HARFBUZZ JPEG LCMS2 LIBOTF LIBSYSTEMD LIBXML2 MODULES
+	   NATIVE_COMP NOTIFY INOTIFY PDUMPER PGTK PNG RSVG SECCOMP
+	   SOUND SQLITE3 THREADS TIFF TOOLKIT_SCROLL_BARS TREE_SITTER
+	   WEBP XIM GTK3 ZLIB
+traits     batch server-running envvar-file
+modules    :config use-package :completion (corfu +icons +dabbrev
+	   +orderless) (vertico +icons) :ui doom dashboard doom-quit
+	   (emoji +ascii +github +unicode) hl-todo indent-guides
+	   (ligatures +extra) minimap modeline nav-flash ophints (popup
+	   +all +defaults) (smooth-scroll +interpolate) (treemacs +lsp)
+	   unicode (vc-gutter +pretty) vi-tilde-fringe (window-select
+	   +numbers) workspaces (zen +mixed-pitch-mode +writeroom-mode)
+	   :editor (evil +everywhere) file-templates fold (format
+	   +onsave) rotate-text snippets (whitespace +guess +trim)
+	   word-wrap :emacs (dired +dirvish +icons) electric eww
+	   (ibuffer +icons) tramp undo vc :term vterm :checkers (syntax
+	   +childframe +flymake +icons) (spell +flyspell +enchant
+	   +everywhere) grammar :tools (debugger +lsp) direnv docker
+	   editorconfig ein (eval +overlay) (lookup +dictionary +offline
+	   +docsets) llm (lsp +peek) (magit +forge) make pdf tmux
+	   tree-sitter :os tty :lang (cc +lsp +tree-sitter) data (elixir
+	   +tree-sitter +lsp) emacs-lisp (erlang +lsp +tree-sitter) (go
+	   +lsp +tree-sitter) (graphql +lsp) (json +tree-sitter +lsp)
+	   (java +tree-sitter +lsp) (javascript +lsp +tree-sitter)
+	   (latex +fold +lsp) (markdown +grip +lsp +tree-sitter) (ocaml
+	   +lsp) (org +dragndrop +crypt +gnuplot +jupyter +noter +pandoc
+	   +present +pretty) (python +uv +cython +lsp +poetry +pyright
+	   +tree-sitter) (rest +jq) rst (sh +lsp +tree-sitter) (web +lsp
+	   +tree-sitter) (yaml +lsp +tree-sitter) (zig +lsp
+	   +tree-sitter) :app calendar everywhere irc (rss +org
+	   +youtube) :config (default +gnupg +bindings +smartparens)
+packages   (nov) (blamer) (magit-todos) (ob-mermaid) (org-modern)
+	   (toc-org) (spacious-padding) (ox-hugo) (org-pdftools :recipe
+	   (:host github :repo fuxialexander/org-pdftools))
+	   (org-noter-pdftools :recipe (:host github :repo
+	   fuxialexander/org-pdftools :files (org-noter-pdftools.el)))
+#+end_src
