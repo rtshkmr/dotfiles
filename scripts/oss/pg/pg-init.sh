@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/pgenv.sh"
+pg_require_install
 
 if [[ -f "$PGDATA/PG_VERSION" ]]; then
 	echo "Cluster already exists at $PGDATA (use pg-reset.sh to recreate)"
