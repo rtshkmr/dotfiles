@@ -3,44 +3,58 @@
 # Sourced by every pg-*.sh script; not meant to be run directly.
 # Needs bash (uses [[ ]]) and stays bash-3.2 compatible for stock macOS.
 #
-# Everything below is derived from the git worktree you're currently in
-# (the cwd), so each worktree gets its own source dir, build dir, install
-# prefix, data dir and port. Several can run side by side with no setup.
+# Tree-aware: everything derives from the git checkout you are standing in (main or a
+# linked worktree), so each tree gets its own build dir, install prefix, data dir and port.
+#
+#   PG_SRC          git toplevel of the current directory (falls back to ~/Projects/pg
+#                   outside a checkout). Override: PG_SRC=/path/to/tree pg-setup.sh
+#   PG_WORKTREE_ID  "main" for the main worktree, otherwise the worktree directory's name
+#   PG_BUILD        $PG_SRC/build
+#   PG_PREFIX       main: ~/pgsql-dev        linked: ~/pgsql-dev-worktrees/<id>
+#   PGDATA          $PG_PREFIX/data
+#   PGPORT          main: 5433               linked: 5434..5533, hashed from <id>
+#   PG_CC           clang on macOS, gcc on Linux (override: PG_CC=gcc-14 pg-setup.sh --wipe)
+#
+# Only PG_SRC, PG_CC and PG_DEBUGGER honour a value already in the environment. The
+# derived values are recomputed on every source, so a stale PGPORT/PGDATA exported by
+# another tree's shell (or by pg-env.sh --export) can never leak into this tree.
+# Run pg-env.sh (or call pg_env) to print what this tree resolved to.
 
-# --- locate the worktree -----------------------------------------------------
-if ! PG_SRC="$(git rev-parse --show-toplevel 2>/dev/null)" || [[ ! -d "$PG_SRC/src/backend" ]]; then
-	echo "pgenv.sh: run this from inside a PostgreSQL worktree (cwd: $PWD)" >&2
-	return 1
-fi
-export PG_SRC
-
-# Main worktree: git dir == common dir. Linked worktree: .git/worktrees/<name>.
-pg_gitdir="$(cd "$PG_SRC" && cd "$(git rev-parse --git-dir)" && pwd -P)"
-pg_common="$(cd "$PG_SRC" && cd "$(git rev-parse --git-common-dir)" && pwd -P)"
-
-if [[ "$pg_gitdir" == "$pg_common" ]]; then
-	# Main worktree keeps the old locations and port, so nothing needs migrating.
-	PG_WORKTREE_ID=main
-	PG_PREFIX="$HOME/pgsql-dev"
-	pg_port_offset=0
-else
-	# Hash the path relative to $HOME so the same layout (e.g. ~/Projects/pg-foo)
-	# gets the same id and port on macOS (/Users/...) and Arch (/home/...).
-	pg_hash="$(printf '%s' "${PG_SRC#"$HOME"/}" | cksum | awk '{print $1}')"
-	PG_WORKTREE_ID="$(basename "$PG_SRC")-$((pg_hash % 100000))"
-	PG_PREFIX="$HOME/pgsql-dev-worktrees/$PG_WORKTREE_ID"
-	pg_port_offset=$((1 + pg_hash % 999))
-fi
-
-export PG_WORKTREE_ID PG_PREFIX
+_pg_main_src="$HOME/Projects/pg" # only used when not inside any git checkout
+_pg_top=$(git rev-parse --show-toplevel 2>/dev/null || true)
+export PG_SRC="${PG_SRC:-${_pg_top:-$_pg_main_src}}"
 export PG_BUILD="$PG_SRC/build"
+
+# Absolute, symlink-free path of a `git rev-parse <option>` directory, or nothing.
+_pg_realdir() {
+	local p
+	p=$(cd "$PG_SRC" 2>/dev/null && git rev-parse "$1" 2>/dev/null) || return 0
+	[[ -n "$p" ]] || return 0
+	(cd "$PG_SRC" && cd "$p" && pwd -P) 2>/dev/null || true
+}
+
+# The main worktree's git dir *is* the common git dir; a linked worktree has its own.
+_pg_gitdir=$(_pg_realdir --git-dir)
+_pg_commondir=$(_pg_realdir --git-common-dir)
+if [[ -z "$_pg_gitdir" || "$_pg_gitdir" == "$_pg_commondir" ]]; then
+	PG_WORKTREE_ID=main
+else
+	PG_WORKTREE_ID=$(basename "$PG_SRC")
+fi
+export PG_WORKTREE_ID
+
+if [[ "$PG_WORKTREE_ID" == main ]]; then
+	PG_PREFIX="$HOME/pgsql-dev"
+	PGPORT=5433 # avoid clashing with a system/Homebrew/pacman instance on 5432
+else
+	PG_PREFIX="$HOME/pgsql-dev-worktrees/$PG_WORKTREE_ID"
+	# stable per-worktree port in 5434..5533
+	PGPORT=$((5434 + $(printf '%s' "$PG_WORKTREE_ID" | cksum | cut -d' ' -f1) % 100))
+fi
+export PG_PREFIX PGPORT
 export PGDATA="$PG_PREFIX/data"
-# Main uses 5433 (avoids a system/Homebrew/pacman instance on 5432); linked
-# worktrees get 5434-6432. Override with PG_PORT=... if two ever collide.
-export PGPORT="${PG_PORT:-$((5433 + pg_port_offset))}"
 export PGDATABASE=postgres
 export PATH="$PG_PREFIX/bin:$PATH"
-unset pg_gitdir pg_common pg_hash pg_port_offset
 
 # --- OS detection ------------------------------------------------------------
 case "$(uname -s)" in
@@ -54,8 +68,7 @@ esac
 export PG_OS
 
 # --- per-OS settings ---------------------------------------------------------
-# Overridable from the caller: PG_DEBUGGER (lldb|gdb) and PG_CC, e.g.
-#   PG_DEBUGGER=lldb pg-attach.sh        PG_CC=gcc-14 pg-setup.sh --wipe
+# PG_DEBUGGER and PG_CC can be overridden from the caller, e.g. PG_DEBUGGER=lldb on Arch.
 case "$PG_OS" in
 macos)
 	# Homebrew's ICU is keg-only, so pkg-config can't see it unless we point at it.
@@ -77,35 +90,37 @@ linux)
 esac
 export PG_DEBUGGER PG_CC
 
-# Policy: builds never go through a compiler cache (ccache/sccache), so a stale
-# or mismatched cache entry can never be the source of a bug. Meson only
-# auto-wraps ccache when CC is unset (pg-setup.sh always sets it); this is a
-# second line of defence in case a ccache wrapper still ends up in the compiler
-# chain, e.g. a masquerade directory early on PATH.
-export CCACHE_DISABLE=1
-
-# --- guards and helpers ------------------------------------------------------
-# A fresh worktree has no install yet. Without this guard, initdb/pg_ctl/psql
-# would silently resolve to a system or Homebrew Postgres further down PATH.
+# --- guard rails ---------------------------------------------------------------
+# Scripts that talk to this worktree's server need *its* install first. Without one, PATH
+# silently falls through to some other postgres (system, or another worktree's).
 pg_require_install() {
-	[[ -x "$PG_PREFIX/bin/postgres" ]] && return 0
-	echo "No install for worktree $PG_WORKTREE_ID at $PG_PREFIX." >&2
-	echo "Run pg-setup.sh && pg-build.sh first." >&2
+	[[ -x "$PG_PREFIX/bin/pg_ctl" ]] && return 0
+	echo "No install for worktree '$PG_WORKTREE_ID' at $PG_PREFIX (run pg-setup.sh && pg-build.sh)." >&2
 	return 1
 }
 
-# Fails if this worktree's build dir was configured with a compiler cache
-# (its compile_commands.json would then start with "ccache gcc ...").
+# Policy: no compiler caches (ccache, sccache). pg-setup.sh refuses a cache wrapper as
+# PG_CC; this checks what an existing build dir was actually configured with, because a
+# reconfigure keeps the compiler chosen at first configure. Silent if nothing is configured.
 pg_require_no_compiler_cache() {
-	local db="$PG_BUILD/compile_commands.json"
-	[[ -f "$db" ]] || return 0
-	if grep -qE '"command": *"([^" ]*/)?s?ccache ' "$db"; then
-		echo "error: $PG_BUILD was configured with a compiler cache (ccache/sccache)." >&2
-		echo "       Run: pg-setup.sh --wipe" >&2
+	local cdb="$PG_BUILD/compile_commands.json" first cc resolved real
+	[[ -f "$cdb" ]] || return 0
+	first=$(grep -m1 '"command"' "$cdb" | sed -e 's/^[^:]*:[[:space:]]*"//') || true
+	cc=${first%% *}
+	[[ -n "$cc" ]] || return 0
+	resolved=$(command -v "$cc" 2>/dev/null || true)
+	real=""
+	if [[ -n "$resolved" ]]; then real=$(readlink -f "$resolved" 2>/dev/null || true); fi
+	case "$cc $resolved $real" in
+	*ccache*)
+		echo "error: the build dir $PG_BUILD was configured with a compiler cache (compiler '$cc'${real:+ -> '$real'})." >&2
+		echo "       Reconfigure with the real compiler:  pg-setup.sh --wipe" >&2
 		return 1
-	fi
+		;;
+	esac
 }
 
+# --- debugger helpers --------------------------------------------------------
 pg_check_debugger() {
 	command -v "$PG_DEBUGGER" >/dev/null 2>&1 && return 0
 	echo "Debugger '$PG_DEBUGGER' not found in PATH." >&2
@@ -124,7 +139,7 @@ pg_warn_ptrace() {
 	scope="$(<"$f")"
 	[[ "$scope" == 0 ]] && return 0
 	echo "Note: kernel.yama.ptrace_scope=$scope, so attaching may fail with 'Operation not permitted'." >&2
-	echo "      Run 'pg-yama.sh open' first, and 'pg-yama.sh close' once the debugger has attached." >&2
+	echo "      Until reboot: sudo sysctl kernel.yama.ptrace_scope=0" >&2
 }
 
 pg_debug_attach() { # pg_debug_attach <pid>
@@ -143,28 +158,28 @@ pg_debug_run() { # pg_debug_run <program> [args...]
 	esac
 }
 
-# --- inspect the environment -------------------------------------------------
-# pg_env            aligned listing, for humans
-# pg_env --export   export NAME=value lines, for: eval "$(pg-env.sh --export)"
+# --- show the resolved environment -------------------------------------------
+# Handy for the values that are derived per tree (PGPORT, PG_PREFIX, ...).
+#   pg_env            human-readable summary, plus build/install/cluster status
+#   pg_env --export   `export` lines for the libpq-facing values only (PGPORT, PGDATA,
+#                     PGDATABASE, PATH), to point psql etc. in your shell at this tree:
+#                       eval "$(pg-env.sh --export)"
 pg_env() {
-	local vars="PG_WORKTREE_ID PG_SRC PG_BUILD PG_PREFIX PGDATA PGPORT PGDATABASE PG_OS PG_DEBUGGER PG_CC" v
+	local v
+	local vars="PG_WORKTREE_ID PG_SRC PG_BUILD PG_PREFIX PGDATA PGPORT PGDATABASE PG_CC PG_OS PG_DEBUGGER"
 	case "${1:-}" in
+	--export)
+		for v in PGPORT PGDATA PGDATABASE PATH; do printf 'export %s=%q\n' "$v" "${!v}"; done
+		;;
 	"")
-		for v in $vars; do
-			printf '%-15s %s\n' "$v" "${!v:-}" # :- keeps set -u callers from aborting
-		done
-		# Default socket location for a source build; adjust if you ever set
-		# unix_socket_directories.
-		printf '%-15s %s\n' "socket" "/tmp/.s.PGSQL.$PGPORT"
+		for v in $vars; do printf '%-15s %s\n' "$v" "${!v}"; done
+		printf '%-15s %s\n' "build dir" \
+			"$([[ -f "$PG_BUILD/compile_commands.json" ]] && echo configured || echo 'not configured (run pg-setup.sh)')"
+		printf '%-15s %s\n' "install" \
+			"$([[ -x "$PG_PREFIX/bin/pg_ctl" ]] && echo present || echo 'missing (run pg-build.sh)')"
+		printf '%-15s %s\n' "cluster" \
+			"$([[ -f "$PGDATA/PG_VERSION" ]] && echo initialized || echo 'not initialized (run pg-init.sh)')"
 		;;
-	-x | --export)
-		for v in $vars; do
-			printf 'export %s=%q\n' "$v" "${!v:-}"
-		done
-		;;
-	*)
-		echo "usage: pg_env [--export]" >&2
-		return 1
-		;;
+	*) echo "Usage: pg_env [--export]" >&2; return 2 ;;
 	esac
 }

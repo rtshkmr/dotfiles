@@ -269,7 +269,7 @@ ensure_excluded() {
   grep -qxF -- "$1" "$exclude_file" || echo "$1" >> "$exclude_file"
 }
 if [[ -n $exclude_file ]]; then
-  for pat in ".clangd" ".clangd.bak" "compile_commands.json" ".cache/"; do
+  for pat in ".clangd" ".clangd.bak" "compile_commands.json" ".cache/" "build/"; do
     ensure_excluded "$pat"
   done
 else

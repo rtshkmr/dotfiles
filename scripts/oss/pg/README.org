@@ -1,118 +1,161 @@
-#+title: PostgreSQL dev scripts
+#+title: PostgreSQL Development  Scripts
 
-Helper scripts for working on the PostgreSQL codebase, on macOS and Arch Linux.
+Some helper scripts when working with the PostgreSQL codebase. Sections of these are AI-generated, human reviewed. That may explain some of the odd phrasing in READMEs and helptexts.
 
-* Setup
+The scripts work out which tree they are in from the *current directory*, not from where the scripts live (see Worktrees below). One shared copy, on =PATH= or called by path, therefore serves main and every worktree; copies in =<repo root>/scripts/= work too. Run them from inside the tree you mean. The examples below assume the scripts are on =PATH=; if you keep copies per repository, prefix them with =./scripts/=.
 
-The scripts live in =~/org/scripts/oss/pg= and are used by name, not copied into the repo. Put them on =PATH= in =~/.zshenv= (so GUI Emacs sees them too):
+Works on macOS and Linux (developed on macOS, also used on Arch Linux). =pgenv.sh= detects the OS with =uname= and sets =PG_OS= (=macos= or =linux=); every other script sources it.
 
-#+begin_src sh
-export PATH="$HOME/org/scripts/oss/pg:$PATH"
-#+end_src
-
-Run every script from *inside a Postgres worktree* (the root or any subdirectory). =pgenv.sh= finds the worktree with =git rev-parse --show-toplevel= and derives everything from it. There is nothing to configure per worktree: no =.envrc=, no hooks. Outside a Postgres checkout the scripts stop with an error (=pg-yama.sh= is the exception: it is system-wide).
-
-* How worktrees work
-
-Each worktree is fully isolated, so several servers can run at once.
-
-| Value                      | Main checkout    | Linked worktree                                      |
-|----------------------------+------------------+------------------------------------------------------|
-| =PG_WORKTREE_ID=             | =main=             | =<dirname>-<hash>=                                     |
-| =PG_BUILD=                   | =<worktree>/build= | =<worktree>/build=                                     |
-| =PG_PREFIX= (install + logs) | =~/pgsql-dev=      | =~/pgsql-dev-worktrees/<id>=                           |
-| =PGDATA=                     | =$PG_PREFIX/data=  | =$PG_PREFIX/data=                                      |
-| =PGPORT=                     | 5433             | 5434-6432, from a hash of the path relative to =$HOME= |
-
-The hash is stable, so the same layout (e.g. =~/Projects/pg-foo=) gets the same id and port on macOS and Arch. Two worktrees can occasionally hash to the same port: set =PG_PORT=<n>= for one of them. The server is always started with =-p $PGPORT=, so the environment wins over =postgresql.conf=.
-
-Run =pg-env.sh= to see the values in effect, and =eval "$(pg-env.sh --export)"= to load them into your shell.
-
-* Build policy: no compiler cache, nothing shared
-
-Correctness of what you review and debug comes first, so builds are deliberately cache-free:
-
-- No ccache or sccache. =pg-setup.sh= always sets =CC=, which stops Meson from auto-wrapping ccache. It also refuses a compiler that resolves to a ccache wrapper, and =pgenv.sh= exports =CCACHE_DISABLE=1= as a second line of defence.
-- =pg-setup.sh= and =pg-build.sh= fail if a build dir was configured with a cache (fix: =pg-setup.sh --wipe=).
-- Nothing build-related is shared between worktrees: each has its own build dir, install prefix, data directory and port. (Only git's object store is shared.)
-- The one remaining "cache" is ninja's incremental state inside a single build dir. For a guaranteed clean build: =pg-setup.sh --wipe && pg-build.sh=.
-
-A good pattern for reviewing a PR is a throwaway worktree: it starts from a pristine build dir and data directory, and =pg-worktree-rm.sh= removes everything afterwards.
-
-* Workflow: a new worktree
-
-Create it with git (=git worktree add ../pg-foo -b foo master=) or Magit (=Z= in the status buffer: new worktree, or the Forge "pull request worktree" command to review a PR). Then, from inside it:
+* Quick start for a new worktree
 
 #+begin_src sh
-pg-env.sh                   # check the id, port and paths
-pg-setup.sh && pg-build.sh  # first build is a full build (own build dir)
-pg-init.sh && pg-start.sh
-pg-psql.sh
-pg-clangd.sh                # per-worktree .clangd (needs the build to have run)
+git worktree add ../pg-cf-1234 <branch>     # a sibling of main, not a subdirectory of it
+cd ../pg-cf-1234
+pg-primetree.sh                             # configure + build + .clangd for this worktree
 #+end_src
 
-Until a worktree has an install, =pg-init.sh=, =pg-start.sh=, =pg-psql.sh= and friends refuse to run, so you never accidentally hit a system or Homebrew Postgres.
+Then open a file from the worktree in Emacs, run =M-x lsp-workspace-restart=, and give clangd a few minutes to build its first index.
 
-* Workflow: day to day
+=pg-primetree.sh= only runs the other scripts in the right order (=pg-setup.sh=, =pg-build.sh=, =pg-clangd.sh=, and with =--init= also =pg-init.sh=) and checks that the tree is set up sanely. Options: =--wipe= (rebuild from scratch, which also drops clangd's index, see below), =--init= (create this worktree's cluster), =--check= (run =pg-clangd.sh --check= at the end).
+
+When you are done with a worktree, =pg-worktree-rm.sh= stops its server and removes the worktree together with its install, data and log.
+
+* Worktrees: one worktree, one build, one install, one cluster
+
+** Why pgenv.sh changed
+
+The original =pgenv.sh= pinned =PG_SRC= to =~/Projects/pg=, whatever directory you ran a script from. With the commitfest worktrees that caused three kinds of trouble.
+
+1. Every script acted on main. =pg-setup.sh=, =pg-build.sh= and =pg-clangd.sh= run from a worktree configured, built and wrote =.clangd= for main. The worktree never got a build dir, a =compile_commands.json= or a =.clangd= of its own.
+2. clangd could not follow code across files in either tree (details in the clangd section below). The symptom was that go-to-definition on a function such as =StartupXLOG()= stopped at the prototype in the header instead of reaching =xlog.c=.
+3. The install prefix, data directory and port were shared. Whichever tree ran =ninja install= last owned the =postgres= binary, so you could be debugging main's binary while reading a patch's source. A patch that bumps =CATALOG_VERSION_NO= or changes the on-disk format would make the shared =PGDATA= refuse to start under the other tree's binary. Two trees could not run a server at the same time, because they shared a port.
+
+** What it does now
+
+=PG_SRC= is the git toplevel of the current directory, and everything else is derived from it. Main keeps its original values, so nothing changes there.
+
+| Variable         | Main                   | Linked worktree                                  |
+|------------------+------------------------+--------------------------------------------------|
+| =PG_WORKTREE_ID= | =main=                 | the worktree directory's name                    |
+| =PG_SRC=         | git toplevel           | git toplevel                                     |
+| =PG_BUILD=       | =$PG_SRC/build=        | =$PG_SRC/build=                                  |
+| =PG_PREFIX=      | =~/pgsql-dev=          | =~/pgsql-dev-worktrees/<id>=                     |
+| =PGDATA=         | =$PG_PREFIX/data=      | =$PG_PREFIX/data=                                |
+| =PGPORT=         | 5433                   | 5434 to 5533, hashed from the id                 |
+| =PG_CC=          | clang on macOS         | gcc on Linux (same for every worktree)           |
+
+- Main is recognised by git, not by path: the main worktree is the one whose git dir is the repository's common git dir, and a linked worktree has a git dir of its own.
+- The port is stable for a given id, so it does not change between sessions. Two ids could in principle hash to the same port, and two worktrees with the same directory name would share an id, prefix and port; if that happens, rename one (=git worktree move=).
+- Outside any git checkout the scripts fall back to =~/Projects/pg=, treated as main.
+- Only =PG_SRC=, =PG_CC= and =PG_DEBUGGER= honour a value that is already in the environment (for example =PG_SRC=/path/to/tree pg-status.sh= from anywhere, or =PG_CC=gcc-14 pg-setup.sh --wipe=). The derived values (=PG_PREFIX=, =PGDATA=, =PGPORT=, =PG_BUILD=) are recomputed every time on purpose: a stale =PGPORT= exported by another worktree's shell would otherwise silently send a script to the wrong server.
+- =pg-start.sh= passes =-p $PGPORT= to the server, so the environment stays authoritative even if a cluster's =postgresql.conf= still holds an older port.
+
+To see what a worktree resolved to, including the derived port, run =pg-env.sh=. It also reports whether the build dir is configured, whether the install is present and whether a cluster exists. To point =psql= and friends in your current shell at that worktree, run =eval "$(pg-env.sh --export)"=; that exports only =PGPORT=, =PGDATA=, =PGDATABASE= and =PATH=. Scripts that source =pgenv.sh= can call =pg_env= directly.
+
+Each worktree needs its own meson build dir for more than tidiness. Generated headers (for example =nodetags.h=) can differ between branches, and =compile_commands.json= describes one source tree: its entries are the files of the tree that was configured.
+
+* Build policy and guard rails
+
+** No compiler caches
+
+Builds use the real compiler: =PG_CC= (clang on macOS, gcc on Linux unless overridden), never a =ccache= or =sccache= wrapper.
+
+# The original rationale for this policy was not available when this section was rewritten; add it here.
+
+- =pg-setup.sh= refuses a cache wrapper or masquerade directory, whether given as =PG_CC= or found on =PATH=.
+- =pg-setup.sh= (after meson has run) and =pg-build.sh= (before every =ninja=) call =pg_require_no_compiler_cache=. It reads the compiler of the first entry in =build/compile_commands.json=, follows symlinks (so a masquerade directory such as =/usr/lib/ccache= is caught), and fails with an instruction to run =pg-setup.sh --wipe=. This matters because meson fixes the compiler at the first configure and a plain reconfigure keeps it.
+- Switching compiler therefore needs =PG_CC=<compiler> pg-setup.sh --wipe= and a full rebuild, which also drops clangd's index for that worktree.
+
+** Guard rails
+
+- =pg_require_install= makes every script that talks to a server (=pg-attach.sh=, =pg-init.sh=, =pg-pids.sh=, =pg-psql.sh=, =pg-reset.sh=, =pg-start.sh=, =pg-stop.sh=) refuse to run until /this/ worktree has its own install. Without it =PATH= would fall through to some other postgres (the system one, or another worktree's) and the script would talk to the wrong server.
+- =pg-reset.sh= asks before deleting =PGDATA= (=-y= skips the prompt, for Emacs compile buffers).
+- =pg-worktree-rm.sh= stops the server, removes the worktree, and only then deletes the prefix, so a refusal from git leaves your data intact. It never removes the main worktree and only deletes prefixes under =~/pgsql-dev-worktrees/=.
+
+* clangd: how go-to-definition works and what goes stale
+
+clangd only parses the file that is open, plus the headers it includes. From =postmaster/startup.c= it sees the prototype of =StartupXLOG()= in =access/xlog.h= and nothing else. It finds the definition in =xlog.c= through its *background index*, which it builds by compiling every entry in =compile_commands.json=. If that index is missing, incomplete, or describes a different tree, clangd falls back to the declaration. A jump that ends at the header is almost always an index problem, not a parsing problem.
+
+Three things have to line up for each worktree.
+
+| Piece                   | Written by                         | Lives in                                                              |
+|-------------------------+------------------------------------+-----------------------------------------------------------------------|
+| =compile_commands.json= | meson (=pg-setup.sh=)              | =$PG_BUILD=                                                           |
+| =.clangd=               | =pg-clangd.sh=                     | =$PG_SRC=, with =CompilationDatabase= pointing at this worktree's =$PG_BUILD= |
+| background index        | clangd itself, after the editor opens a file | =.cache/clangd/index= beside the compile database, so inside =$PG_BUILD= |
+
+** Failure modes and fixes
+
+| Situation                                                            | Symptom                                                              | Fix                                                                   |
+|----------------------------------------------------------------------+----------------------------------------------------------------------+-----------------------------------------------------------------------|
+| Worktree has no build dir, =.clangd= or compile database             | fallback flags, no index, jumps stop at headers                      | =pg-primetree.sh= in the worktree                                     |
+| Worktree nested inside main                                          | clangd walks up and picks up main's =.clangd=, so it reads main's compile database and index; jumps fail or land in main's files | keep worktrees as siblings (=git worktree move=)                      |
+| =pg-setup.sh --wipe= (or deleting =build/=)                          | index is gone along with the build dir; navigation degrades until clangd has re-indexed | wait a few minutes after reopening a file                             |
+| Editor started clangd before =.clangd= or the compile database existed | stale configuration                                               | =M-x lsp-workspace-restart=                                           |
+| lsp-mode treats several trees as one workspace                       | worktree buffers served by main's clangd session                     | =M-x lsp-describe-session=; =M-: (lsp-workspace-root)= should be the worktree path |
+| Index still incomplete                                               | some jumps work, others do not                                       | look for =BackgroundIndex= / =Indexed= lines in =*clangd::stderr*=, and let it finish |
+
+** Quick checks
 
 #+begin_src sh
-pg-build.sh && pg-reset.sh -y   # rebuild and recreate the cluster (-y skips the prompt)
-pg-test.sh                      # setup + regress; or: pg-test.sh --suite recovery
-pg-status.sh                    # which worktree, running or not, last log lines
+# Does this worktree's compile database describe this worktree?
+grep -n CompilationDatabase .clangd
+jq -r '.[] | select(.file | test("transam/xlog\\.c$")) | .directory' build/compile_commands.json | head -1
+# the printed directory should be this worktree's build/
+
+# Is there an index for this worktree?
+ls build/.cache/clangd/index 2>/dev/null | wc -l     # 0 or a handful means not built yet
+
+# Header and .c sanity check (also shows the compile command clangd borrowed for a header)
+pg-clangd.sh --check
 #+end_src
 
-From Emacs, =M-x compile= in a buffer of the worktree runs there, so =pg-build.sh= just works. Use =pg-reset.sh -y= in compile buffers, since there is no terminal to answer the prompt.
+** What gets ignored by git
 
-* Workflow: debugging
+=pg-clangd.sh= adds =.clangd=, =.clangd.bak=, =compile_commands.json=, =.cache/= and =build/= to =.git/info/exclude=. That file is shared by all worktrees of a repository, so this happens once, and a worktree's build dir never shows up in =magit-status=.
 
-#+begin_src sh
-pg-psql.sh      # in one terminal
-pg-attach.sh    # in another: attaches to the newest other backend
-pg-single.sh    # single-user backend under the debugger (stop the server first)
-#+end_src
+** Editor side
 
-On Linux, gdb needs ptrace on a non-child process. If =kernel.yama.ptrace_scope= is not 0:
-
-#+begin_src sh
-pg-yama.sh open && pg-attach.sh
-# at the (gdb) prompt once attached:
-#   shell pg-yama.sh close
-#+end_src
-
-=pg-yama.sh status= shows the current value and any saved original. =pg-lldb.sh= is a thin wrapper for =PG_DEBUGGER=lldb pg-attach.sh=.
-
-* Workflow: removing a worktree
-
-#+begin_src sh
-pg-worktree-rm.sh ../pg-foo        # or no argument for the current worktree
-#+end_src
-
-It shows what it will delete and asks first (=-y= skips the prompt). It stops the worktree's server, runs =git worktree remove=, and only then deletes =~/pgsql-dev-worktrees/<id>=, so a refusal from git leaves your data alone. If git objects because of untracked files, rerun with =-f=. It never removes the main worktree.
+For a gcc build, clangd needs =--query-driver= to learn gcc's system include directories and predefined macros. =pg-clangd.sh= prints the exact line to add to Doom's =config.el= when it detects a gcc build.
 
 * What differs per OS
 
-| Thing              | macOS                | Linux (Arch)                  |
-|--------------------+----------------------+-------------------------------|
-| Compiler (=PG_CC=)   | clang                | gcc                           |
-| ICU for pkg-config | Homebrew =icu4c= added | system package                |
-| Debugger           | lldb                 | gdb (needs ptrace, see above) |
-| clangd             | =brew install llvm=    | =pacman -S clang=               |
+| Thing              | macOS                              | Linux (Arch)                      |
+|--------------------+------------------------------------+-----------------------------------|
+| ICU for pkg-config | Homebrew =icu4c= added to path     | system package, nothing to do     |
+| Compiler           | =clang=                            | =gcc=                             |
+| Debugger           | =lldb=                             | =gdb=                             |
+| Attach to backend  | =pg-attach.sh=                     | =pg-attach.sh= (see ptrace below) |
 
-On macOS, attaching lldb may require Developer Tools security to be enabled (=sudo DevToolsSecurity -enable=).
+Override the debugger with =PG_DEBUGGER=, e.g. =PG_DEBUGGER=lldb pg-attach.sh=, and the compiler with =PG_CC=.
 
-Arch packages: =sudo pacman -S --needed base-devel meson ninja flex bison icu readline openssl gdb=
+* Arch setup
 
-Overrides, per run: =PG_CC=, =PG_DEBUGGER=, =PG_PORT=.
+#+begin_src sh
+sudo pacman -S --needed base-devel meson ninja flex bison icu readline openssl gdb
+#+end_src
+
+Attaching =gdb= to a backend needs ptrace on a non-descendant process. If =kernel.yama.ptrace_scope= is not 0 you get "Operation not permitted". Yama only checks at attach time, so the safe routine is to open the restriction just long enough to attach, then close it from inside gdb:
+
+#+begin_src sh
+pg-yama.sh open && pg-attach.sh
+# at the (gdb) prompt, once "Attaching to process" has succeeded:
+#   shell pg-yama.sh close
+#+end_src
+
+=pg-yama.sh= saves the original value and restores exactly that on =close=. It is system-wide, so it works from any directory. Run =pg-yama.sh status= (or =cat /proc/sys/kernel/yama/ptrace_scope=) if you are ever unsure it was closed.
 
 * Scripts
 
-- =pgenv.sh= :: sourced by all the others; derives the per-worktree environment
-- =pg-env.sh [--export]= :: print the environment (id, port, paths)
-- =pg-setup.sh [--wipe]= :: meson setup / reconfigure (the compiler is fixed at first configure; refuses compiler caches)
-- =pg-build.sh= :: =ninja install= (refuses a build dir configured with a compiler cache)
+- =pg-primetree.sh [--wipe] [--init] [--check]= :: prime a fresh checkout or worktree: setup, build, clangd, optionally a cluster
+- =pg-env.sh [--export]= :: show the values =pgenv.sh= resolved for this worktree (id, port, prefix, data dir, ...); =--export= prints =export= lines for =eval=
+- =pg-setup.sh [--wipe]= :: meson setup / reconfigure; refuses compiler caches
+- =pg-build.sh= :: ninja install; refuses a build dir configured with a compiler cache
+- =pg-clangd.sh [--check [FILE]]= :: write this worktree's =.clangd= and sanity-check clangd
 - =pg-init.sh=, =pg-start.sh=, =pg-stop.sh=, =pg-reset.sh [-y]=, =pg-status.sh= :: cluster lifecycle
 - =pg-psql.sh=, =pg-pids.sh= :: client and backend list
-- =pg-attach.sh [pid]=, =pg-single.sh=, =pg-yama.sh= :: debugging
-- =pg-clangd.sh [--check]= :: write =.clangd= and symlink =compile_commands.json= in the current worktree; excluded via the shared =.git/info/exclude=
+- =pg-attach.sh [pid]= :: attach lldb/gdb to a backend (=pg-lldb.sh= is a wrapper that forces lldb)
+- =pg-single.sh= :: single-user backend under the debugger
+- =pg-yama.sh [open|close|toggle|status]= :: temporarily open/close Yama's ptrace restriction (Linux only)
 - =pg-test.sh= :: meson test
-- =pg-worktree-rm.sh [-y] [-f] [dir]= :: tear down a linked worktree and its server, install and data
+- =pg-worktree-rm.sh [-y] [-f] [WORKTREE_DIR]= :: tear down a linked worktree together with its server, install, data and log
